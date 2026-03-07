@@ -21,6 +21,36 @@
         }
       }
     },
+    "error.no.connection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection. Please check your network and try again."
+          }
+        }
+      }
+    },
+    "error.server.error" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong on our end. Please try again later."
+          }
+        }
+      }
+    },
+    "error.unexpected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong. Please try again."
+          }
+        }
+      }
+    },
     "history.nav.title" : {
       "localizations" : {
         "en" : {

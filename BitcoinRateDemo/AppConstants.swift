@@ -20,4 +20,8 @@ enum AppConstants {
     enum API {
         static let priceHistoryDays = 14
     }
+
+    enum Logging {
+        static let subsystem = Bundle.main.bundleIdentifier ?? "BitcoinTest"
+    }
 }
