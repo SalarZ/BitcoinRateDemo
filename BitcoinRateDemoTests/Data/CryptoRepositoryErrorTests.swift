@@ -28,4 +28,18 @@ struct CryptoRepositoryErrorTests {
         let error = CryptoRepositoryError.unexpected
         #expect(error.errorDescription == String(localized: "error.unexpected"))
     }
+
+    @Test("missingRequiredField has expected description")
+    func missingRequiredFieldDescription() {
+        let field = "bitcoin"
+        let error = CryptoRepositoryError.mapping(.missingRequiredField(field: field))
+        #expect(error.errorDescription == String(localized: "error.mapping.missingRequiredField \(field)"))
+    }
+
+    @Test("unexpectedValue has expected description")
+    func unexpectedValueDescription() {
+        let field = "bitcoin"
+        let error = CryptoRepositoryError.mapping(.unexpectedValue(field: field))
+        #expect(error.errorDescription == String(localized: "error.mapping.unexpectedValue \(field)"))
+    }
 }

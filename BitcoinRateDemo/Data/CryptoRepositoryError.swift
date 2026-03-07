@@ -7,10 +7,25 @@
 
 import Foundation
 
+enum MappingError: Error, LocalizedError, Equatable {
+    case missingRequiredField(field: String)
+    case unexpectedValue(field: String)
+
+    var errorDescription: String? {
+        switch self {
+        case .missingRequiredField(let field):
+            return String(localized: "error.mapping.missingRequiredField \(field)")
+        case .unexpectedValue(let field):
+            return String(localized: "error.mapping.unexpectedValue \(field)")
+        }
+    }
+}
+
 enum CryptoRepositoryError: Error, LocalizedError, Equatable {
     case noConnection
     case serverError(statusCode: Int)
     case unexpected
+    case mapping(MappingError)
 
     var errorDescription: String? {
         switch self {
@@ -20,6 +35,8 @@ enum CryptoRepositoryError: Error, LocalizedError, Equatable {
             return String(localized: "error.server.error")
         case .unexpected:
             return String(localized: "error.unexpected")
+        case .mapping(let error):
+            return error.localizedDescription
         }
     }
 }

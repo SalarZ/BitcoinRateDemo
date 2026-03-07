@@ -21,6 +21,26 @@
         }
       }
     },
+    "error.mapping.missingRequiredField %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missing required field: %@."
+          }
+        }
+      }
+    },
+    "error.mapping.unexpectedValue %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unexpected value for %@."
+          }
+        }
+      }
+    },
     "error.no.connection" : {
       "localizations" : {
         "en" : {
