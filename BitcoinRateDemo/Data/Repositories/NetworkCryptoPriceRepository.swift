@@ -11,7 +11,6 @@ import OSLog
 final class NetworkCryptoPriceRepository: CryptoPriceRepository {
 
     private let networkClient: NetworkClient
-
     private static let logger = Logger(subsystem: AppConstants.Logging.subsystem,
                                        category: "CryptoPriceRepository")
 
@@ -56,6 +55,24 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
         }
     }
 
+    func priceDetails(coinId: String, date: Date) async throws -> PriceDetails {
+        let formattedDate = date.apiDateFormat
+
+        let request = APIRequest(
+            path: "coins/\(coinId)/history",
+            queryItems: [
+                .init(name: "date", value: formattedDate),
+                .init(name: "localization", value: "false"),
+            ])
+
+        do {
+            let details: CoinDetailsDTO = try await networkClient.send(request)
+            return details.toPriceDetails(for: date)
+        } catch {
+            throw mapped(error, context: "coinHistoryDetails coinId=\(coinId) date=\(formattedDate)")
+        }
+    }
+
     // MARK: - Error mapping
 
     private func mapped(_ error: Error, context: String) -> Error {
@@ -67,5 +84,15 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
         }
         Self.logger.error("Request failed — \(context, privacy: .public): \(error.localizedDescription, privacy: .public)")
         return CryptoRepositoryError.unexpected
+    }
+}
+
+extension Date {
+    var apiDateFormat: String {
+        self.formatted(
+            .verbatim("\(day: .twoDigits)-\(month: .twoDigits)-\(year: .defaultDigits)" as Date.FormatString,
+                      locale: .init(identifier: "en_US_POSIX"),
+                      timeZone: .current,
+                      calendar: .current))
     }
 }

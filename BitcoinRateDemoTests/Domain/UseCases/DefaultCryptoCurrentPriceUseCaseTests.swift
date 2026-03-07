@@ -23,6 +23,12 @@ struct DefaultCryptoCurrentPriceUseCaseTests {
 
         let point = try await sut.execute(coinId: "bitcoin", currency: "eur")
 
+        #expect(repo.livePriceCalls.count == 1)
+
+        let firstCallItem = try #require(repo.livePriceCalls.first)
+        #expect(firstCallItem.coinId == "bitcoin")
+        #expect(firstCallItem.currencies == ["eur"])
+
         #expect(point.price == 45_000.0)
         #expect(point.coinId == "bitcoin")
         #expect(point.date == fixedDate)

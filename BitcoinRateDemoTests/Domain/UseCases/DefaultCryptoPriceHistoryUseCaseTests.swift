@@ -23,6 +23,13 @@ struct DefaultCryptoPriceHistoryUseCaseTests {
 
         let result = try await sut.execute(coinId: "bitcoin", currency: "eur", days: days)
 
+        #expect(repo.historicalPricesCalls.count == 1)
+
+        let firstCallItem = try #require(repo.historicalPricesCalls.first)
+        #expect(firstCallItem.coinId == "bitcoin")
+        #expect(firstCallItem.currency == "eur")
+        #expect(firstCallItem.days == days)
+
         #expect(result.count == days - 1)
         #expect(result.first?.price == 13.0)
         #expect(result.last?.price == 1.0)

@@ -103,7 +103,6 @@ struct NetworkCryptoPriceRepositoryTests {
 
     // MARK: - livePrice
 
-
     @Test("livePrice returns converted details and builds correct request")
     func livePrice_success() async throws {
         let expectedCoinId = "bitcoin"
@@ -129,9 +128,8 @@ struct NetworkCryptoPriceRepositoryTests {
         #expect(request.queryItems.contains(URLQueryItem(name: "localization", value: "false")))
         #expect(request.queryItems.contains(URLQueryItem(name: "include_last_updated_at", value: "true")))
         #expect(request.queryItems.contains(URLQueryItem(name: "precision", value: "full")))
-        let expected = try dto.toCoinPriceDetails(coinId: expectedCoinId)
+        let expected = try dto.toLivePrice(coinId: expectedCoinId)
         #expect(result == expected)
-
     }
 
     @Test("livePrice throw unexpectedValue")
@@ -188,6 +186,79 @@ struct NetworkCryptoPriceRepositoryTests {
 
         await #expect(throws: CryptoRepositoryError.unexpected) {
             _ = try await sut.livePrice(coinId: "bitcoin", currencies: ["usd"])
+        }
+    }
+
+    // MARK: - priceDetails
+    @Test("priceDetails returns converted details and builds correct request")
+    func priceDetails_success() async throws {
+        let coinId = "bitcoin"
+        let date = Date.now
+        let client = MockNetworkClient()
+        let sut = NetworkCryptoPriceRepository(networkClient: client)
+        let dto = CoinDetailsDTO(
+            name: coinId,
+            marketData: MarketDataDTO(
+                currentPrice: ["eur": 1_000,
+                               "usd": 1_200,
+                               "gbp": 800]
+            )
+        )
+
+        client.result = dto
+
+        let result = try await sut.priceDetails(coinId: coinId, date: date)
+
+        #expect(client.sendCalls.count == 1)
+        let request = try #require(client.sendCalls.first)
+
+        #expect(request.path == "coins/bitcoin/history")
+        #expect(request.queryItems.count == 2)
+        #expect(request.queryItems.contains(URLQueryItem(name: "date", value: date.apiDateFormat)))
+        #expect(request.queryItems.contains(URLQueryItem(name: "localization", value: "false")))
+        let expected = dto.toPriceDetails(for: date)
+        #expect(result == expected)
+    }
+
+    @Test("priceDetails passes through CryptoRepositoryError unchanged")
+    func priceDetails_passthroughCryptoRepositoryError() async {
+        let client = MockNetworkClient()
+        client.error = CryptoRepositoryError.unexpected
+
+        let sut = NetworkCryptoPriceRepository(networkClient: client)
+
+        await #expect(throws: CryptoRepositoryError.unexpected) {
+            _ = try await sut.priceDetails(coinId: "bitcoin", date: Date.now)
+        }
+    }
+
+    @Test("priceDetails maps connection errors to noConnection")
+    func priceDetails_mapsConnectionErrors() async {
+        let coinId = "bitcoin"
+        let date = Date.now
+        for code in [URLError.Code.notConnectedToInternet, .networkConnectionLost] {
+            let client = MockNetworkClient()
+            client.error = URLError(code)
+
+            let sut = NetworkCryptoPriceRepository(networkClient: client)
+
+            await #expect(throws: CryptoRepositoryError.noConnection) {
+                _ = try await sut.priceDetails(coinId: coinId, date: date)
+            }
+        }
+    }
+
+    @Test("priceDetails maps non-network errors to unexpected")
+    func priceDetails_mapsUnexpectedError() async {
+        let coinId = "bitcoin"
+        let date = Date.now
+        let client = MockNetworkClient()
+        client.error = NSError(domain: "any-error", code: 0)
+
+        let sut = NetworkCryptoPriceRepository(networkClient: client)
+
+        await #expect(throws: CryptoRepositoryError.unexpected) {
+            _ = try await sut.priceDetails(coinId: coinId, date: date)
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PriceDetails {
+struct PriceDetails: Equatable {
     let name: String
     let eurPrice: Double?
     let usdPrice: Double?
