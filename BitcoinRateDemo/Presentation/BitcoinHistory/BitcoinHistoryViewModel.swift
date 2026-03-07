@@ -28,9 +28,9 @@ final class BitcoinHistoryViewModel: ObservableObject {
         state = .loading
         do {
             let points = try await priceHistoryUseCase.execute(
-                coinId: "bitcoin",
-                currency: "eur",
-                days: 14)
+                coinId: AppConstants.Coin.bitcoinId,
+                currency: AppConstants.Currency.eur,
+                days: AppConstants.API.priceHistoryDays)
             state = .success(points.map { makePriceRow(from: $0) })
         } catch {
             state = .failure(error.localizedDescription)
@@ -39,6 +39,6 @@ final class BitcoinHistoryViewModel: ObservableObject {
 
     private func makePriceRow(from item: PricePoint) -> PriceRow {
         PriceRow(formattedDate: item.date.formatted(.dateTime.year().month().day()),
-                 formattedPrice: item.price.formatted(.currency(code: "eur".uppercased())))
+                 formattedPrice: item.price.formatted(.currency(code: AppConstants.Currency.eur.uppercased())))
     }
 }

@@ -30,9 +30,9 @@ struct BitcoinHistoryViewModelTests {
 
         #expect(mockUseCase.executeCalls.count == 1)
         let firstCall = mockUseCase.executeCalls.first!
-        #expect(firstCall.0 == "bitcoin")
-        #expect(firstCall.1 == "eur")
-        #expect(firstCall.2 == 14)
+        #expect(firstCall.0 == AppConstants.Coin.bitcoinId)
+        #expect(firstCall.1 == AppConstants.Currency.eur)
+        #expect(firstCall.2 == AppConstants.API.priceHistoryDays)
     }
 
     @Test("load() transitions to success with mapped PriceRows")
