@@ -18,6 +18,7 @@ enum AppConstants {
     }
 
     enum API {
+        static let baseURL = URL(string: "https://api.coingecko.com/api/v3/")!
         static let priceHistoryDays = 14
     }
 
