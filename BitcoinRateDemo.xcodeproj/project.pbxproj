@@ -30,6 +30,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2F1514982F5CA64D0086E369 /* Exceptions for "BitcoinRateDemo" folder in "BitcoinRateDemo" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2FDC01372F5C01070015DAC4 /* BitcoinRateDemo */;
+		};
 		2FC31A0B2F5C178A00B32181 /* Exceptions for "BitcoinRateDemo" folder in "BitcoinRateDemoTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -43,6 +50,7 @@
 		2FDC013A2F5C01070015DAC4 /* BitcoinRateDemo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				2F1514982F5CA64D0086E369 /* Exceptions for "BitcoinRateDemo" folder in "BitcoinRateDemo" target */,
 				2FC31A0B2F5C178A00B32181 /* Exceptions for "BitcoinRateDemo" folder in "BitcoinRateDemoTests" target */,
 			);
 			path = BitcoinRateDemo;
@@ -284,6 +292,8 @@
 /* Begin XCBuildConfiguration section */
 		2FDC01572F5C01090015DAC4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 2FDC013A2F5C01070015DAC4 /* BitcoinRateDemo */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -349,6 +359,8 @@
 		};
 		2FDC01582F5C01090015DAC4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 2FDC013A2F5C01070015DAC4 /* BitcoinRateDemo */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -415,6 +427,7 @@
 				DEVELOPMENT_TEAM = G9YKB4H594;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BitcoinRateDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -447,6 +460,7 @@
 				DEVELOPMENT_TEAM = G9YKB4H594;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BitcoinRateDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
