@@ -30,8 +30,11 @@ struct BitcoinHistoryItemsView: View {
                         }
                     }
                 
-            case .failure(let string):
-                makeErrorView(errorMessage: string)
+            case .failure(let error):
+                ErrorView(message: error) {
+                    await viewModel.load()
+                }
+                .padding()
             }
         }
         .task {
@@ -46,21 +49,6 @@ struct BitcoinHistoryItemsView: View {
                 .id(UUID())
             Spacer()
         }
-    }
-    private func makeErrorView(errorMessage: String) -> some View {
-        VStack(spacing: 12) {
-            Text(String(localized: "error.failed.to.load"))
-                .font(.headline)
-            Text(errorMessage)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            Button(String(localized: "action.retry")) {
-                Task {
-                    await viewModel.load()
-                }
-            }
-        }
-        .padding()
     }
 }
 
