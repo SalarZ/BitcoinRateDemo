@@ -1,5 +1,5 @@
 //
-//  BitcoinHistoryViewModelTests.swift
+//  BitcoinHistoryItemsViewModelTests.swift
 //  BitcoinRateDemoTests
 //
 //  Created by Salar on 3/7/26.
@@ -10,11 +10,11 @@ import Testing
 @testable import BitcoinRateDemo
 
 @MainActor
-struct BitcoinHistoryViewModelTests {
+struct BitcoinHistoryItemsViewModelTests {
 
     @Test("initial state is loading")
     func initialStateIsLoading() {
-        let sut = BitcoinHistoryViewModel(getCryptoHistoryUseCase: MockCryptoPriceHistoryUseCase())
+        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoPriceHistoryUseCase())
         guard case .loading = sut.state else {
             Issue.record("Expected .loading initial state")
             return
@@ -24,7 +24,7 @@ struct BitcoinHistoryViewModelTests {
     @Test("load() calls use case once")
     func loadCallsUseCaseOnce() async {
         let mockUseCase = MockCryptoPriceHistoryUseCase()
-        let sut = BitcoinHistoryViewModel(getCryptoHistoryUseCase: mockUseCase)
+        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: mockUseCase)
         
         await sut.load()
 
@@ -42,7 +42,7 @@ struct BitcoinHistoryViewModelTests {
             PricePoint(date: fixedDate, price: 40_000, coinId: "bitcoin"),
             PricePoint(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
         ]
-        let sut = BitcoinHistoryViewModel(
+        let sut = BitcoinHistoryItemsViewModel(
             getCryptoHistoryUseCase: MockCryptoPriceHistoryUseCase(result: .success(points)))
 
         await sut.load()
@@ -60,7 +60,7 @@ struct BitcoinHistoryViewModelTests {
     @Test("load() transitions to failure on error")
     func loadFailure() async {
         let anyError = NSError(domain: "any-error", code: 0)
-        let vm = BitcoinHistoryViewModel(
+        let vm = BitcoinHistoryItemsViewModel(
             getCryptoHistoryUseCase: MockCryptoPriceHistoryUseCase(result: .failure(anyError)))
 
         await vm.load()
@@ -76,7 +76,7 @@ struct BitcoinHistoryViewModelTests {
     func loadSetsLoadingFirst() async {
         let error = NSError(domain: "any-error", code: 0)
         let mockUseCase = MockCryptoPriceHistoryUseCase(result: .failure(error))
-        let sut = BitcoinHistoryViewModel(getCryptoHistoryUseCase: mockUseCase)
+        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: mockUseCase)
         
         await sut.load()
 

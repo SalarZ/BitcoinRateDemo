@@ -21,9 +21,6 @@
         }
       }
     },
-    "Hello, world!" : {
-
-    },
     "history.nav.title" : {
       "localizations" : {
         "en" : {
@@ -40,6 +37,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "History"
+          }
+        }
+      }
+    },
+    "history.section.today" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         }
       }

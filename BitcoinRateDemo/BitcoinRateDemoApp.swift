@@ -11,7 +11,11 @@ import SwiftUI
 struct BitcoinRateDemoApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                BitcoinHistoryView(
+                    bitcoinHistoryItemsViewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase()),
+                    currentPriceCardViewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(), refreshInterval: 5))
+            }
         }
     }
 }

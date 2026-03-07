@@ -128,7 +128,7 @@ struct CurrentPriceCardViewModelTests {
 
         await sut.manualRetry()
 
-        guard case .stale(let price) = sut.state else {
+        guard case .stale = sut.state else {
             Issue.record("Expected .stale state")
             return
         }

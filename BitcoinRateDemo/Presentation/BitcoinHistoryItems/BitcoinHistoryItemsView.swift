@@ -1,5 +1,5 @@
 //
-//  BitcoinHistoryView.swift
+//  BitcoinHistoryItemsView.swift
 //  BitcoinRateDemo
 //
 //  Created by Salar on 3/7/26.
@@ -7,20 +7,20 @@
 
 import SwiftUI
 
-struct BitcoinHistoryView: View {
-    @StateObject private var viewModel: BitcoinHistoryViewModel
+struct BitcoinHistoryItemsView: View {
+    @StateObject private var viewModel: BitcoinHistoryItemsViewModel
 
-    init(viewModel: BitcoinHistoryViewModel) {
+    init(viewModel: BitcoinHistoryItemsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
-        List {
+        Section(String(localized: "history.section.history")) {
             switch viewModel.state {
             case .loading:
                 loadingView
             case .success(let items):
-                Section(String(localized: "history.section.history")) {
+
                     ForEach(items) { item in
                         HStack {
                             Text(item.formattedDate)
@@ -29,12 +29,11 @@ struct BitcoinHistoryView: View {
                                 .monospacedDigit()
                         }
                     }
-                }
+                
             case .failure(let string):
                 makeErrorView(errorMessage: string)
             }
         }
-        .navigationTitle(String(localized: "history.nav.title"))
         .task {
             await viewModel.load()
         }
@@ -66,14 +65,14 @@ struct BitcoinHistoryView: View {
 }
 
 #Preview("Success state") {
-    BitcoinHistoryView(viewModel: BitcoinHistoryViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase()))
+    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase()))
 }
 
 #Preview("Failue state") {
-    BitcoinHistoryView(viewModel: BitcoinHistoryViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false)))
+    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false)))
 }
 
-private struct MockCryptoHistoryUseCase: CryptoPriceHistoryUseCase {
+struct MockCryptoHistoryUseCase: CryptoPriceHistoryUseCase {
     var delayDuration: TimeInterval
     var isSuccess: Bool
 
