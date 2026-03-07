@@ -8,12 +8,6 @@
 import Foundation
 import Combine
 
-enum ViewState<T: Equatable>: Equatable {
-    case loading
-    case success(T)
-    case failure(String)
-}
-
 @MainActor
 final class BitcoinHistoryViewModel: ObservableObject {
     @Published private(set) var state: ViewState<[PriceRow]> = .loading
@@ -38,7 +32,7 @@ final class BitcoinHistoryViewModel: ObservableObject {
     }
 
     private func makePriceRow(from item: PricePoint) -> PriceRow {
-        PriceRow(formattedDate: item.date.formatted(.dateTime.year().month().day()),
-                 formattedPrice: item.price.formatted(.currency(code: AppConstants.Currency.eur.uppercased())))
+        PriceRow(formattedDate: item.date.yearMonthDayFormatted,
+                 formattedPrice: item.price.currencyFormatted(code: AppConstants.Currency.eur))
     }
 }

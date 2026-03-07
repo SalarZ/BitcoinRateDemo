@@ -53,8 +53,8 @@ struct BitcoinHistoryViewModelTests {
         }
         #expect(rows.count == 2)
         #expect(!rows[0].id.uuidString.isEmpty)
-        #expect(rows[0].formattedDate == points[0].date.formatted(.dateTime.year().month().day()))
-        #expect(rows[0].formattedPrice == points[0].price.formatted(.currency(code: "eur".uppercased())))
+        #expect(rows[0].formattedDate == points[0].date.yearMonthDayFormatted)
+        #expect(rows[0].formattedPrice == points[0].price.currencyFormatted(code: AppConstants.Currency.eur))
     }
 
     @Test("load() transitions to failure on error")
