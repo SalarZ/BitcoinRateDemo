@@ -13,6 +13,11 @@ struct CoinPriceDTO: Decodable {
     let prices: [String: Double]
     let lastUpdatedAt: Date
 
+    init(prices: [String: Double], lastUpdatedAt: Date) {
+        self.prices = prices
+        self.lastUpdatedAt = lastUpdatedAt
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: DynamicCodingKey.self)
 

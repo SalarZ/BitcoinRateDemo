@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CoinPriceDetails {
+struct CoinPriceDetails: Equatable {
     let name: String
     let prices: [String: Double]
     let lastUpdate: Date

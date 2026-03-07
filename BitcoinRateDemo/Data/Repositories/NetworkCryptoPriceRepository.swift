@@ -15,13 +15,6 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
     private static let logger = Logger(subsystem: AppConstants.Logging.subsystem,
                                        category: "CryptoPriceRepository")
 
-    private static let apiDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd-MM-yyyy"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        return formatter
-    }()
-
     init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }
