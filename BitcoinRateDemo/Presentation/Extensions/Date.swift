@@ -11,4 +11,8 @@ extension Date {
     var yearMonthDayFormatted: String {
         self.formatted(.dateTime.year().month().day())
     }
+
+    var hourMinuteSecondFormatted: String {
+        self.formatted(.dateTime.hour().minute().second())
+    }
 }

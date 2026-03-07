@@ -65,11 +65,11 @@ struct BitcoinHistoryView: View {
     }
 }
 
-#Preview {
+#Preview("Success state") {
     BitcoinHistoryView(viewModel: BitcoinHistoryViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase()))
 }
 
-#Preview {
+#Preview("Failue state") {
     BitcoinHistoryView(viewModel: BitcoinHistoryViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false)))
 }
 
