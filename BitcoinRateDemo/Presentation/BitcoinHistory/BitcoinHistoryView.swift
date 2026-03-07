@@ -20,7 +20,7 @@ struct BitcoinHistoryView: View {
             case .loading:
                 loadingView
             case .success(let items):
-                Section("History") {
+                Section(String(localized: "history.section.history")) {
                     ForEach(items) { item in
                         HStack {
                             Text(item.formattedDate)
@@ -34,7 +34,7 @@ struct BitcoinHistoryView: View {
                 makeErrorView(errorMessage: string)
             }
         }
-        .navigationTitle(String(localized: "History"))
+        .navigationTitle(String(localized: "history.nav.title"))
         .task {
             await viewModel.load()
         }
@@ -50,12 +50,12 @@ struct BitcoinHistoryView: View {
     }
     private func makeErrorView(errorMessage: String) -> some View {
         VStack(spacing: 12) {
-            Text("failed to load")
+            Text(String(localized: "error.failed.to.load"))
                 .font(.headline)
             Text(errorMessage)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
-            Button("retry") {
+            Button(String(localized: "action.retry")) {
                 Task {
                     await viewModel.load()
                 }
