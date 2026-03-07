@@ -83,7 +83,7 @@ private struct MockCryptoHistoryUseCase: CryptoPriceHistoryUseCase {
     }
 
     func execute(coinId: String, currency: String, days: Int) async throws -> [PricePoint] {
-        try? await Task.sleep(nanoseconds: UInt64(delayDuration) * 1_000_000_000)
+        try? await Task.sleep(seconds: delayDuration)
         guard isSuccess else { throw NSError(domain: "", code: 0, userInfo: nil)}
         return (0..<days).map { i in
             PricePoint(date: makeDate(daysAgo: i), price: Double(i), coinId: "bitcoin")

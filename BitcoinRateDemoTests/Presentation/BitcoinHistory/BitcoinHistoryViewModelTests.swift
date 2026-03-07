@@ -128,7 +128,7 @@ final class MockCryptoPriceHistoryUseCase: CryptoPriceHistoryUseCase {
         case .none:
             break
         case .sleep(let duration):
-            try await Task.sleep(nanoseconds: UInt64(duration) * 1_000_000_000)
+            try await Task.sleep(seconds: duration)
         case .yield:
             await Task.yield()
         }

@@ -12,22 +12,24 @@ import Foundation
 @MainActor
 struct CurrentPriceCardViewModelTests {
 
-    @Test
+    @Test("initial state is loading")
     func initialStateIsLoading() async throws {
         let anyResult = makeResult()
         let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
         let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
 
-        #expect(sut.state == ViewState<LivePriceViewItem>.loading)
+        #expect(sut.state == .loading)
     }
 
-    @Test("load() calls use case once")
-    func loadCallsUseCaseOnce() async {
+    @Test("start() calls use case once")
+    func startCallsUseCaseOnce() async {
         let anyResult = makeResult()
         let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
         let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
 
-        await sut.load()
+        sut.start()
+
+        await Task.yield()
 
         #expect(mockUseCase.executeCalls.count == 1)
         let firstCall = mockUseCase.executeCalls.first!
@@ -35,15 +37,32 @@ struct CurrentPriceCardViewModelTests {
         #expect(firstCall.1 == AppConstants.Currency.eur)
     }
 
-    @Test("load() transitions to success with mapped PriceRows")
-    func loadSuccess() async {
+    @Test("start() ignores second call")
+    func startCallsUseCaseOnceOnMultipleCalled() async {
         let anyResult = makeResult()
         let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
         let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
 
-        await sut.load()
+        sut.start()
+        sut.start()
 
-        guard case .success(let item) = sut.state else {
+        await Task.yield()
+        await Task.yield()
+
+        #expect(mockUseCase.executeCalls.count == 1)
+    }
+
+    @Test("start() transitions to success with mapped PriceRows")
+    func startSuccess() async {
+        let anyResult = makeResult()
+        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
+        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
+
+        sut.start()
+
+        await Task.yield()
+
+        guard case .loaded(let item) = sut.state else {
             Issue.record("Expected .success state after load()")
             return
         }
@@ -53,13 +72,15 @@ struct CurrentPriceCardViewModelTests {
         #expect(item.priceText == anyResult.price.currencyFormatted(code: AppConstants.Currency.eur))
     }
 
-    @Test("load() transitions to failure on error")
-    func loadFailure() async {
+    @Test("start() transitions to failure on error")
+    func startFailure() async {
         let anyError = NSError(domain: "any-error", code: 0)
         let mockUseCase = MockCryptoCurrentPriceUseCase(result: .failure(anyError))
         let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
 
-        await sut.load()
+        sut.start()
+
+        await Task.yield()
 
         guard case .failure(let message) = sut.state else {
             Issue.record("Expected .failure state after load() with error")
@@ -68,29 +89,49 @@ struct CurrentPriceCardViewModelTests {
         #expect(!message.isEmpty)
     }
 
-    @Test("load() sets state to loading before fetching")
-    func loadSetsLoadingFirst() async {
-        let expectedResult = makeResult()
-        let error = NSError(domain: "any-error", code: 0)
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .failure(error))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
+    @Test("start() transitions to failure on error")
+    func startTriggersRefreshing() async {
+        let anyResult = makeResult()
+        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
+        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase, refreshInterval: 0.1)
 
-        await sut.load()
+        sut.start()
 
-        #expect(sut.state != .loading)
+        try? await Task.sleep(seconds: 0.18)
 
-        mockUseCase.result = .success(expectedResult)
-        mockUseCase.setDelayMode(.yield)
+        #expect(mockUseCase.executeCalls.count == 2)
+    }
 
-        let loadTask = Task {
-            await sut.load()
-        }
+    @Test("manualRetry() triggers a price refresh")
+    func manualRetryTriggersRefresh() async {
+        let anyResult = makeResult()
+        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
+        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase, refreshInterval: 0.1)
+
+        await sut.manualRetry()
+
+        #expect(mockUseCase.executeCalls.count == 1)
+    }
+
+    @Test("manualRetry() triggers a price refresh")
+    func refreshSetStaleOnFailureWhenWeHaveTheLastPrice() async {
+        let anyResult = makeResult()
+        let anyError = NSError(domain: "any-error", code: 0)
+        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
+        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase, refreshInterval: 0.1)
+
+        sut.start()
 
         await Task.yield()
 
-        #expect(sut.state == .loading)
-        await loadTask.value
-        #expect(sut.state != .loading)
+        mockUseCase.result = .failure(anyError)
+
+        await sut.manualRetry()
+
+        guard case .stale(let price) = sut.state else {
+            Issue.record("Expected .stale state")
+            return
+        }
     }
 
     // MARK: - Helpers
@@ -130,7 +171,7 @@ private final class MockCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
         case .none:
             break
         case .sleep(let duration):
-            try await Task.sleep(nanoseconds: UInt64(duration) * 1_000_000_000)
+            try await Task.sleep(seconds: duration)
         case .yield:
             await Task.yield()
         }

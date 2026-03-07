@@ -26,6 +26,12 @@ struct CurrentPriceCardView: View {
                 }
 
                 Spacer()
+
+                HStack(spacing: 8) {
+                    if let badge = badgeText {
+                        BadgeView(text: badge)
+                    }
+                }
             }
 
             switch viewModel.state {
@@ -35,13 +41,22 @@ struct CurrentPriceCardView: View {
                     .foregroundStyle(.secondary)
                     .redacted(reason: .placeholder)
 
-            case .success(let price):
+            case .loaded(let price):
                 Text(String(localized: "price.card.updated \(price.lastUpdated)"))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
 
+            case .stale:
+                HStack {
+                    Text("price.card.stale")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    retryButton
+                }
+
             case .failure(let err):
-                HStack(alignment: .firstTextBaseline) {
+                HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("price.card.failed")
                             .font(.footnote)
@@ -51,16 +66,13 @@ struct CurrentPriceCardView: View {
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Button {
-                        Task { await viewModel.load() }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
+
+                    retryButton
                 }
             }
         }
         .task {
-            await viewModel.load()
+            viewModel.start()
         }
     }
 
@@ -68,8 +80,29 @@ struct CurrentPriceCardView: View {
         switch viewModel.state {
         case .loading, .failure:
             return String(localized: "price.card.placeholder")
-        case .success(let price):
+        case .loaded(let price), .stale(let price):
             return price.priceText
+        }
+    }
+
+    private var badgeText: String? {
+        switch viewModel.state {
+        case .loaded:  return String(localized: "price.card.badge.live")
+        case .stale:   return String(localized: "price.card.badge.stale")
+        default:       return nil
+        }
+    }
+
+    @ViewBuilder
+    private var retryButton: some View {
+        if viewModel.isRefreshing {
+            ProgressView()
+        } else {
+            Button {
+                Task { await viewModel.manualRetry() }
+            } label: {
+                Image(systemName: "arrow.clockwise")
+            }
         }
     }
 }
@@ -79,11 +112,20 @@ struct CurrentPriceCardView: View {
 
 }
 
+#Preview("Stale state") {
+    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCaseStaleState(), refreshInterval: 1))
+
+}
+
 #Preview("Failure state") {
     CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: false)))
 }
 
-private final class MockGetCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
+#Preview("Refresh") {
+    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: true), refreshInterval: 5))
+}
+
+final class MockGetCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
     private let delayDuration: TimeInterval
     private let isSuccess: Bool
 
@@ -93,8 +135,28 @@ private final class MockGetCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase 
     }
 
     func execute(coinId: String, currency: String) async throws -> PricePoint {
-        try? await Task.sleep(nanoseconds: UInt64(delayDuration) * 1_000_000_000)
+        try? await Task.sleep(seconds: delayDuration)
         guard isSuccess else { throw NSError(domain: "", code: 0, userInfo: nil)}
+        return PricePoint(date: Date.now, price: 1234.1234, coinId: "bitcoin")
+    }
+}
+
+final class MockGetCryptoCurrentPriceUseCaseStaleState: CryptoCurrentPriceUseCase {
+    private let delayDuration: TimeInterval
+    private var executeCalled = false
+
+    init(delayDuration: TimeInterval = 1) {
+        self.delayDuration = delayDuration
+    }
+
+    func execute(coinId: String, currency: String) async throws -> PricePoint {
+        try? await Task.sleep(seconds: delayDuration)
+        guard !executeCalled else {
+            executeCalled.toggle()
+            throw NSError(domain: "", code: 0, userInfo: nil)
+        }
+
+        executeCalled.toggle()
         return PricePoint(date: Date.now, price: 1234.1234, coinId: "bitcoin")
     }
 }
