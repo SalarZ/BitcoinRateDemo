@@ -7,5 +7,5 @@
 
 protocol CryptoPriceRepository {
     func historicalPrices(coinId: String, currency: String, days: Int) async throws -> [PricePoint]
-    func livePrice(coinId: String, currencies: [String]) async throws -> CoinPriceDetails
+    func livePrice(coinId: String, currencies: [String]) async throws -> LivePrice
 }

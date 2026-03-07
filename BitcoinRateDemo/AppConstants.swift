@@ -15,6 +15,9 @@ enum AppConstants {
 
     enum Currency {
         static let eur = "eur"
+        static let usd = "usd"
+        static let gbp = "gbp"
+        static let detailCurrencies = [eur, usd, gbp]
     }
 
     enum API {

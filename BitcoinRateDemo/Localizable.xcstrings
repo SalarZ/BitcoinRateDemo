@@ -11,6 +11,26 @@
         }
       }
     },
+    "details.last.update %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last update: %@"
+          }
+        }
+      }
+    },
+    "details.nav.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Price Details"
+          }
+        }
+      }
+    },
     "error.failed.to.load" : {
       "localizations" : {
         "en" : {

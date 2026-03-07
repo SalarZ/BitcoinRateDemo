@@ -6,11 +6,11 @@
 //
 
 extension CoinGeckoPricesDTO {
-    func toCoinPriceDetails(coinId: String) throws -> CoinPriceDetails {
+    func toLivePrice(coinId: String) throws -> LivePrice {
         guard let coinDetail = self[coinId] else {
             throw CryptoRepositoryError.mapping(.missingRequiredField(field: coinId))
         }
-        return CoinPriceDetails(name: coinId,
+        return LivePrice(name: coinId,
                          prices: coinDetail.prices,
                          lastUpdate: coinDetail.lastUpdatedAt)
     }

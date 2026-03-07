@@ -17,7 +17,7 @@ struct DefaultCryptoCurrentPriceUseCaseTests {
     func returnsPricePoint() async throws {
         let repo = MockCryptoPriceRepository()
         repo.livePriceResult = .success(
-            CoinPriceDetails(name: "bitcoin", prices: ["eur": 45_000.0, "usd": 48_000.0], lastUpdate: fixedDate)
+            LivePrice(name: "bitcoin", prices: ["eur": 45_000.0, "usd": 48_000.0], lastUpdate: fixedDate)
         )
         let sut = DefaultCryptoCurrentPriceUseCase(repository: repo)
 
@@ -32,7 +32,7 @@ struct DefaultCryptoCurrentPriceUseCaseTests {
     func throwsOnMissingCurrency() async throws {
         let repo = MockCryptoPriceRepository()
         repo.livePriceResult = .success(
-            CoinPriceDetails(name: "bitcoin", prices: ["usd": 48_000.0], lastUpdate: fixedDate)
+            LivePrice(name: "bitcoin", prices: ["usd": 48_000.0], lastUpdate: fixedDate)
         )
         let sut = DefaultCryptoCurrentPriceUseCase(repository: repo)
 

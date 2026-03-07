@@ -37,7 +37,7 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
         }
     }
 
-    func livePrice(coinId: String, currencies: [String]) async throws -> CoinPriceDetails {
+    func livePrice(coinId: String, currencies: [String]) async throws -> LivePrice {
         let request = APIRequest(
             path: "simple/price",
             queryItems: [
@@ -50,7 +50,7 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
 
         do {
             let details: CoinGeckoPricesDTO = try await networkClient.send(request)
-            return try details.toCoinPriceDetails(coinId: coinId)
+            return try details.toLivePrice(coinId: coinId)
         } catch {
             throw mapped(error, context: "livePrice coinId=\(coinId)")
         }
