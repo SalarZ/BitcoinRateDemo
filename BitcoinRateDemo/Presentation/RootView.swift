@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RootView: View {
-    @Environment(\.container) private var container
+    @EnvironmentObject private var container: DependencyContainer
     @StateObject private var coordinator = AppCoordinator()
 
     var body: some View {

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CryptoHistoryItemsView: View {
+    @EnvironmentObject private var container: DependencyContainer
     @StateObject private var viewModel: CryptoHistoryItemsViewModel
 
     init(viewModel: CryptoHistoryItemsViewModel) {
@@ -20,7 +21,6 @@ struct CryptoHistoryItemsView: View {
             case .loading:
                 loadingView
             case .success(let items):
-
                 ForEach(items) { item in
                     HStack {
                         Text(item.date)
@@ -40,9 +40,6 @@ struct CryptoHistoryItemsView: View {
                 }
                 .padding()
             }
-        }
-        .task {
-            await viewModel.load()
         }
     }
 

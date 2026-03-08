@@ -6,10 +6,11 @@
 //
 
 import Foundation
-import SwiftUI
+import Combine
 
-struct DependencyContainer {
-
+@MainActor
+final class DependencyContainer: ObservableObject {
+    let appCoordinator = AppCoordinator()
     let priceHistoryUseCase: CryptoPriceHistoryUseCase
     let currentPriceUseCase: CryptoCurrentPriceUseCase
     let priceDetailsUseCase: CryptoPriceDetailsUseCase
@@ -26,18 +27,5 @@ struct DependencyContainer {
         currentPriceUseCase = DefaultCryptoCurrentPriceUseCase(repository: networkRepo)
         priceDetailsUseCase = DefaultCryptoPriceDetailsUseCase(repository: networkRepo)
         livePriceDetailsUseCase = DefaultLivePriceDetailsUseCase(repository: networkRepo)
-    }
-}
-
-// MARK: - Environment
-
-private struct DependencyContainerKey: @MainActor EnvironmentKey {
-    @MainActor static let defaultValue = DependencyContainer()
-}
-
-extension EnvironmentValues {
-    @MainActor var container: DependencyContainer {
-        get { self[DependencyContainerKey.self] }
-        set { self[DependencyContainerKey.self] = newValue }
     }
 }

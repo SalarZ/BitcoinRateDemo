@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct LivePriceCardView: View {
-    @ObservedObject var viewModel: LivePriceCardViewModel
+    @StateObject private var viewModel: LivePriceCardViewModel
+
+    init(viewModel: LivePriceCardViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
