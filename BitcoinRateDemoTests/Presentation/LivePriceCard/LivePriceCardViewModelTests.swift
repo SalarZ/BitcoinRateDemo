@@ -81,14 +81,14 @@ struct LivePriceCardViewModelTests {
         #expect(!message.isEmpty)
     }
 
-    @Test("start() transitions to failure on error")
+    @Test("start() triggeres the price refresh")
     func startTriggersRefreshing() async {
         _ = Self.makeResult()
-        let (sut, useCase) = makeSUT(refreshInterval: 0.01)
+        let (sut, useCase) = makeSUT(refreshInterval: 0.1)
 
         sut.start()
 
-        try? await Task.sleep(seconds: 0.018)
+        try? await Task.sleep(seconds: 0.15)
 
         #expect(useCase.executeCalls.count == 2)
     }

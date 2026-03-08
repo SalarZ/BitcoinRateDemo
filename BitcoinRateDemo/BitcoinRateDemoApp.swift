@@ -9,11 +9,13 @@ import SwiftUI
 
 @main
 struct BitcoinRateDemoApp: App {
-    private let container = DependencyContainer()
+    @StateObject private var container = DependencyContainer()
+
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(container)
+                .environmentObject(container.appCoordinator)
         }
     }
 }

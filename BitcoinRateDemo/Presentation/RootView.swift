@@ -9,18 +9,13 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var container: DependencyContainer
-    @StateObject private var coordinator = AppCoordinator()
+    @EnvironmentObject private var coordinator: AppCoordinator
 
     var body: some View {
         NavigationView {
             CryptoHistoryView(
-                cryptoHistoryItemsViewModel: CryptoHistoryItemsViewModel(
-                    getCryptoHistoryUseCase: container.priceHistoryUseCase,
-                    onSelection: { coordinator.navigate(to: .priceDetails($0)) }
-                ),
-                livePriceCardViewModel: LivePriceCardViewModel(
-                    getCryptoCurrentPriceUseCase: container.currentPriceUseCase,
-                    onSelection: { coordinator.navigate(to: .livePriceDetails(coinId: $0))})
+                cryptoHistoryItemsViewModel: container.cryptoHistoryItemsViewModel,
+                livePriceCardViewModel: container.livePriceCardViewModel
             )
             .background(hiddenLink)
         }
@@ -57,5 +52,8 @@ struct RootView: View {
 }
 
 #Preview {
-    RootView()
+    let container = DependencyContainer()
+    return RootView()
+        .environmentObject(container)
+        .environmentObject(container.appCoordinator)
 }

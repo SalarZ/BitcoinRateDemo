@@ -8,14 +8,8 @@
 import SwiftUI
 
 struct CryptoHistoryView: View {
-    @StateObject var cryptoHistoryItemsViewModel: CryptoHistoryItemsViewModel
-    @StateObject var livePriceCardViewModel: LivePriceCardViewModel
-
-    init(cryptoHistoryItemsViewModel: CryptoHistoryItemsViewModel,
-         livePriceCardViewModel: LivePriceCardViewModel) {
-        _cryptoHistoryItemsViewModel = StateObject(wrappedValue: cryptoHistoryItemsViewModel)
-        _livePriceCardViewModel = StateObject(wrappedValue: livePriceCardViewModel)
-    }
+    @ObservedObject var cryptoHistoryItemsViewModel: CryptoHistoryItemsViewModel
+    @ObservedObject var livePriceCardViewModel: LivePriceCardViewModel
 
     var body: some View {
         List {

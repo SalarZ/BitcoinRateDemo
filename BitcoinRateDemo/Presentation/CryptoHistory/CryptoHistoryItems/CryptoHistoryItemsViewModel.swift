@@ -19,23 +19,18 @@ final class CryptoHistoryItemsViewModel: ObservableObject {
          onSelection: @escaping (CryptoPrice) -> Void) {
         self.priceHistoryUseCase = getCryptoHistoryUseCase
         self.onSelection = onSelection
-        load()
     }
 
-    func load() {
-        Task {
-            state = .loading
-            do {
-                try Task.checkCancellation()
-                let prices = try await priceHistoryUseCase.execute(
-                    coinId: AppConstants.Coin.bitcoinId,
-                    currency: AppConstants.Currency.eur,
-                    days: AppConstants.API.priceHistoryDays)
-                try Task.checkCancellation()
-                state = .success(prices.map { makePriceRow(from: $0) })
-            } catch {
-                state = .failure(error.localizedDescription)
-            }
+    func load() async {
+        state = .loading
+        do {
+            let prices = try await priceHistoryUseCase.execute(
+                coinId: AppConstants.Coin.bitcoinId,
+                currency: AppConstants.Currency.eur,
+                days: AppConstants.API.priceHistoryDays)
+            state = .success(prices.map { makePriceRow(from: $0) })
+        } catch {
+            state = .failure(error.localizedDescription)
         }
     }
 

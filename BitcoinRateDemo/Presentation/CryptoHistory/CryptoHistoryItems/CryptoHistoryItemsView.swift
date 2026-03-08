@@ -41,6 +41,9 @@ struct CryptoHistoryItemsView: View {
                 .padding()
             }
         }
+        .task {
+            await viewModel.load()
+        }
     }
 
     private var loadingView: some View {
