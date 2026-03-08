@@ -108,21 +108,21 @@ struct CurrentPriceCardView: View {
 }
 
 #Preview("Success state") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase()))
+    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(), onSelection: { _ in }))
 
 }
 
 #Preview("Stale state") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCaseStaleState(), refreshInterval: 1))
+    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCaseStaleState(), refreshInterval: 1, onSelection: { _ in }))
 
 }
 
 #Preview("Failure state") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: false)))
+    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: false), onSelection: { _ in }))
 }
 
 #Preview("Refresh") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: true), refreshInterval: 5))
+    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: true), refreshInterval: 5, onSelection: { _ in }))
 }
 
 final class MockGetCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {

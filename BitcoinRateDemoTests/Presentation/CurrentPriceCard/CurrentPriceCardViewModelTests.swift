@@ -14,34 +14,28 @@ struct CurrentPriceCardViewModelTests {
 
     @Test("initial state is loading")
     func initialStateIsLoading() async throws {
-        let anyResult = makeResult()
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
+        let (sut, _) = makeSUT()
 
         #expect(sut.state == .loading)
     }
 
     @Test("start() calls use case once")
     func startCallsUseCaseOnce() async {
-        let anyResult = makeResult()
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
+        let (sut, useCase) = makeSUT()
 
         sut.start()
 
         await Task.yield()
 
-        #expect(mockUseCase.executeCalls.count == 1)
-        let firstCall = mockUseCase.executeCalls.first!
+        #expect(useCase.executeCalls.count == 1)
+        let firstCall = useCase.executeCalls.first!
         #expect(firstCall.0 == AppConstants.Coin.bitcoinId)
         #expect(firstCall.1 == AppConstants.Currency.eur)
     }
 
     @Test("start() ignores second call")
     func startCallsUseCaseOnceOnMultipleCalled() async {
-        let anyResult = makeResult()
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
+        let (sut, useCase) = makeSUT()
 
         sut.start()
         sut.start()
@@ -49,14 +43,13 @@ struct CurrentPriceCardViewModelTests {
         await Task.yield()
         await Task.yield()
 
-        #expect(mockUseCase.executeCalls.count == 1)
+        #expect(useCase.executeCalls.count == 1)
     }
 
     @Test("start() transitions to success with mapped PriceRows")
     func startSuccess() async {
-        let anyResult = makeResult()
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
+        let anyResult = Self.makeResult()
+        let (sut, useCase) = makeSUT(result: .success(anyResult))
 
         sut.start()
 
@@ -75,8 +68,7 @@ struct CurrentPriceCardViewModelTests {
     @Test("start() transitions to failure on error")
     func startFailure() async {
         let anyError = NSError(domain: "any-error", code: 0)
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .failure(anyError))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase)
+        let (sut, useCase) = makeSUT(result: .failure(anyError))
 
         sut.start()
 
@@ -91,40 +83,36 @@ struct CurrentPriceCardViewModelTests {
 
     @Test("start() transitions to failure on error")
     func startTriggersRefreshing() async {
-        let anyResult = makeResult()
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase, refreshInterval: 0.1)
+        let anyResult = Self.makeResult()
+        let (sut, useCase) = makeSUT(refreshInterval: 0.1)
 
         sut.start()
 
         try? await Task.sleep(seconds: 0.18)
 
-        #expect(mockUseCase.executeCalls.count == 2)
+        #expect(useCase.executeCalls.count == 2)
     }
 
     @Test("manualRetry() triggers a price refresh")
     func manualRetryTriggersRefresh() async {
-        let anyResult = makeResult()
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase, refreshInterval: 0.1)
+        let anyResult = Self.makeResult()
+        let (sut, useCase) = makeSUT()
 
         await sut.manualRetry()
 
-        #expect(mockUseCase.executeCalls.count == 1)
+        #expect(useCase.executeCalls.count == 1)
     }
 
     @Test("manualRetry() triggers a price refresh")
     func refreshSetStaleOnFailureWhenWeHaveTheLastPrice() async {
-        let anyResult = makeResult()
         let anyError = NSError(domain: "any-error", code: 0)
-        let mockUseCase = MockCryptoCurrentPriceUseCase(result: .success(anyResult))
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: mockUseCase, refreshInterval: 0.1)
+        let (sut, useCase) = makeSUT(refreshInterval: 0.1)
 
         sut.start()
 
         await Task.yield()
 
-        mockUseCase.result = .failure(anyError)
+        useCase.result = .failure(anyError)
 
         await sut.manualRetry()
 
@@ -135,7 +123,17 @@ struct CurrentPriceCardViewModelTests {
     }
 
     // MARK: - Helpers
-    private func makeResult(date: Date = .now, price: Double = 123.123, coinId: String = "btc") -> PricePoint {
+    private func makeSUT(result: Result<PricePoint, Error> = .success(Self.makeResult()),
+                         refreshInterval: TimeInterval = 1,
+                         onSelection: @escaping (String) -> Void = { _ in }
+    ) -> (sut: CurrentPriceCardViewModel, useCase: MockCryptoCurrentPriceUseCase) {
+        let useCase = MockCryptoCurrentPriceUseCase(result: result)
+        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: useCase, refreshInterval: refreshInterval, onSelection: onSelection)
+
+        return (sut, useCase)
+    }
+
+    private static func makeResult(date: Date = .now, price: Double = 123.123, coinId: String = "btc") -> PricePoint {
         PricePoint(date: date, price: price, coinId: coinId)
     }
 }

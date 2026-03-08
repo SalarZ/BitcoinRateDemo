@@ -19,7 +19,8 @@ struct RootView: View {
                     onSelection: { coordinator.navigate(to: .priceDetails($0)) }
                 ),
                 currentPriceCardViewModel: CurrentPriceCardViewModel(
-                    getCryptoCurrentPriceUseCase: container.currentPriceUseCase)
+                    getCryptoCurrentPriceUseCase: container.currentPriceUseCase,
+                    onSelection: { coordinator.navigate(to: .livePriceDetails(coinId: $0))})
             )
             .background(hiddenLink)
         }
@@ -44,6 +45,10 @@ struct RootView: View {
         case .priceDetails(let pricePoint):
             PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {
                 try await container.priceDetailsUseCase.execute(coinId: pricePoint.coinId, date: pricePoint.date)
+            }))
+        case .livePriceDetails(let coinId):
+            PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {
+                try await container.livePriceDetailsUseCase.execute(coinId: coinId)
             }))
         case .none:
             EmptyView()

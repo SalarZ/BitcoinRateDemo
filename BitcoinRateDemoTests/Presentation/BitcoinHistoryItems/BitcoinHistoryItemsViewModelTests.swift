@@ -14,7 +14,8 @@ struct BitcoinHistoryItemsViewModelTests {
 
     @Test("initial state is loading")
     func initialStateIsLoading() {
-        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoPriceHistoryUseCase())
+        let (sut, _) = makeSUT()
+
         guard case .loading = sut.state else {
             Issue.record("Expected .loading initial state")
             return
@@ -23,13 +24,12 @@ struct BitcoinHistoryItemsViewModelTests {
 
     @Test("load() calls use case once")
     func loadCallsUseCaseOnce() async {
-        let mockUseCase = MockCryptoPriceHistoryUseCase()
-        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: mockUseCase)
-        
+        let (sut, useCase) = makeSUT()
+
         await sut.load()
 
-        #expect(mockUseCase.executeCalls.count == 1)
-        let firstCall = mockUseCase.executeCalls.first!
+        #expect(useCase.executeCalls.count == 1)
+        let firstCall = useCase.executeCalls.first!
         #expect(firstCall.0 == AppConstants.Coin.bitcoinId)
         #expect(firstCall.1 == AppConstants.Currency.eur)
         #expect(firstCall.2 == AppConstants.API.priceHistoryDays)
@@ -42,8 +42,7 @@ struct BitcoinHistoryItemsViewModelTests {
             PricePoint(date: fixedDate, price: 40_000, coinId: "bitcoin"),
             PricePoint(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
         ]
-        let sut = BitcoinHistoryItemsViewModel(
-            getCryptoHistoryUseCase: MockCryptoPriceHistoryUseCase(result: .success(points)))
+        let (sut, useCase) = makeSUT(result: .success(points))
 
         await sut.load()
 
@@ -60,12 +59,11 @@ struct BitcoinHistoryItemsViewModelTests {
     @Test("load() transitions to failure on error")
     func loadFailure() async {
         let anyError = NSError(domain: "any-error", code: 0)
-        let vm = BitcoinHistoryItemsViewModel(
-            getCryptoHistoryUseCase: MockCryptoPriceHistoryUseCase(result: .failure(anyError)))
+        let (sut, _) = makeSUT(result: .failure(anyError))
 
-        await vm.load()
+        await sut.load()
 
-        guard case .failure(let message) = vm.state else {
+        guard case .failure(let message) = sut.state else {
             Issue.record("Expected .failure state after load() with error")
             return
         }
@@ -74,16 +72,15 @@ struct BitcoinHistoryItemsViewModelTests {
 
     @Test("load() sets state to loading before fetching")
     func loadSetsLoadingFirst() async {
-        let error = NSError(domain: "any-error", code: 0)
-        let mockUseCase = MockCryptoPriceHistoryUseCase(result: .failure(error))
-        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: mockUseCase)
-        
+        let anyError = NSError(domain: "any-error", code: 0)
+        let (sut, useCase) = makeSUT(result: .failure(anyError))
+
         await sut.load()
 
         #expect(sut.state != .loading)
 
-        mockUseCase.result = .success([])
-        mockUseCase.setDelayMode(.yield)
+        useCase.result = .success([])
+        useCase.setDelayMode(.yield)
 
         let loadTask = Task {
             await sut.load()
@@ -94,6 +91,16 @@ struct BitcoinHistoryItemsViewModelTests {
         #expect(sut.state == .loading)
         await loadTask.value
         #expect(sut.state == .success([]))
+    }
+
+    // MARK: - Helpers
+    private func makeSUT(result: Result<[PricePoint], Error> = .success([]),
+                         onSelection: @escaping (PricePoint) -> Void = { _ in }
+    ) -> (sut: BitcoinHistoryItemsViewModel, useCase: MockCryptoPriceHistoryUseCase) {
+        let useCase = MockCryptoPriceHistoryUseCase(result: result)
+        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: useCase, onSelection: onSelection)
+
+        return (sut, useCase)
     }
 }
 

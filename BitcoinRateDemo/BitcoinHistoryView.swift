@@ -20,6 +20,10 @@ struct BitcoinHistoryView: View {
         List {
             Section(String(localized: "history.section.today")) {
                 CurrentPriceCardView(viewModel: currentPriceCardViewModel)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        currentPriceCardViewModel.onSelect()
+                    }
             }
 
             BitcoinHistoryItemsView(viewModel: bitcoinHistoryItemsViewModel)
@@ -31,5 +35,5 @@ struct BitcoinHistoryView: View {
 #Preview {
     BitcoinHistoryView(
         bitcoinHistoryItemsViewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(), onSelection: { _ in }),
-        currentPriceCardViewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase()))
+        currentPriceCardViewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(), onSelection: { _ in }))
 }

@@ -22,4 +22,5 @@ final class AppCoordinator: ObservableObject {
 
 enum AppRoute: Hashable {
     case priceDetails(PricePoint)
+    case livePriceDetails(coinId: String)
 }

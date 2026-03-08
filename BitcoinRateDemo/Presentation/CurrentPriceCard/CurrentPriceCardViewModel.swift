@@ -30,11 +30,15 @@ final class CurrentPriceCardViewModel: ObservableObject {
     private var refreshTask: Task<Void, Never>?
     private var lastUpdatedPrice: LivePriceViewItem?
 
+    private let onSelection: (String) -> Void
     private let getCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase
 
-    init(getCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase, refreshInterval: TimeInterval = 60) {
+    init(getCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase,
+         refreshInterval: TimeInterval = 60,
+         onSelection: @escaping (String) -> Void) {
         self.getCryptoCurrentPriceUseCase = getCryptoCurrentPriceUseCase
         self.refreshInterval = refreshInterval
+        self.onSelection = onSelection
     }
 
     func start() {
@@ -50,6 +54,10 @@ final class CurrentPriceCardViewModel: ObservableObject {
 
     func manualRetry() async {
         await refresh(trigger: .manual)
+    }
+
+    func onSelect() {
+        onSelection(coinId)
     }
 
     private func refresh(trigger: Trigger) async {

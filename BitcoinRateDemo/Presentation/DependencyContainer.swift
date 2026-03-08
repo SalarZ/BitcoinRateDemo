@@ -13,6 +13,7 @@ struct DependencyContainer {
     let priceHistoryUseCase: CryptoPriceHistoryUseCase
     let currentPriceUseCase: CryptoCurrentPriceUseCase
     let priceDetailsUseCase: CryptoPriceDetailsUseCase
+    let livePriceDetailsUseCase: CryptoLivePriceDetailsUseCase
 
     init() {
         let networkClient = DefaultNetworkClient(
@@ -24,6 +25,7 @@ struct DependencyContainer {
         priceHistoryUseCase = DefaultCryptoPriceHistoryUseCase(repository: networkRepo)
         currentPriceUseCase = DefaultCryptoCurrentPriceUseCase(repository: networkRepo)
         priceDetailsUseCase = DefaultCryptoPriceDetailsUseCase(repository: networkRepo)
+        livePriceDetailsUseCase = DefaultLivePriceDetailsUseCase(repository: networkRepo)
     }
 }
 
