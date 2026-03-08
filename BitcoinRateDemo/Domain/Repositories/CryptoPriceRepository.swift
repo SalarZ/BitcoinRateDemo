@@ -10,5 +10,5 @@ import Foundation
 protocol CryptoPriceRepository {
     func historicalPrices(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice]
     func livePrice(coinId: String, currencies: [String]) async throws -> LivePrice
-    func priceDetails(coinId: String, date: Date) async throws -> PriceDetails
+    func priceDetails(coinId: String, date: Date) async throws -> CryptoDetails
 }

@@ -1,5 +1,5 @@
 //
-//  BitcoinHistoryItemsViewModel.swift
+//  CryptoHistoryItemsViewModel.swift
 //  BitcoinRateDemo
 //
 //  Created by Salar on 3/7/26.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @MainActor
-final class BitcoinHistoryItemsViewModel: ObservableObject {
+final class CryptoHistoryItemsViewModel: ObservableObject {
     @Published private(set) var state: ViewState<[PriceRow]> = .loading
 
     private let priceHistoryUseCase: CryptoPriceHistoryUseCase

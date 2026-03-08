@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CryptoPriceDetailsUseCase {
-    func execute(coinId: String, date: Date) async throws -> PriceDetails
+    func execute(coinId: String, date: Date) async throws -> CryptoDetails
 }
 
 struct DefaultCryptoPriceDetailsUseCase: CryptoPriceDetailsUseCase {
@@ -18,7 +18,7 @@ struct DefaultCryptoPriceDetailsUseCase: CryptoPriceDetailsUseCase {
         self.repository = repository
     }
 
-    func execute(coinId: String, date: Date) async throws -> PriceDetails {
+    func execute(coinId: String, date: Date) async throws -> CryptoDetails {
         return try await repository.priceDetails(coinId: coinId, date: date)
     }
 }

@@ -13,12 +13,12 @@ struct RootView: View {
 
     var body: some View {
         NavigationView {
-            BitcoinHistoryView(
-                bitcoinHistoryItemsViewModel: BitcoinHistoryItemsViewModel(
+            CryptoHistoryView(
+                cryptoHistoryItemsViewModel: CryptoHistoryItemsViewModel(
                     getCryptoHistoryUseCase: container.priceHistoryUseCase,
                     onSelection: { coordinator.navigate(to: .priceDetails($0)) }
                 ),
-                currentPriceCardViewModel: CurrentPriceCardViewModel(
+                livePriceCardViewModel: LivePriceCardViewModel(
                     getCryptoCurrentPriceUseCase: container.currentPriceUseCase,
                     onSelection: { coordinator.navigate(to: .livePriceDetails(coinId: $0))})
             )
@@ -43,11 +43,11 @@ struct RootView: View {
     private var destinationView: some View {
         switch coordinator.activeRoute {
         case .priceDetails(let price):
-            PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {
+            CryptoDetailsView(viewModel: CryptoDetailsViewModel(loader: {
                 try await container.priceDetailsUseCase.execute(coinId: price.coinId, date: price.date)
             }))
         case .livePriceDetails(let coinId):
-            PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {
+            CryptoDetailsView(viewModel: CryptoDetailsViewModel(loader: {
                 try await container.livePriceDetailsUseCase.execute(coinId: coinId)
             }))
         case .none:

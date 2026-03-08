@@ -1,5 +1,5 @@
 //
-//  PriceDetailsViewModelTests.swift
+//  CryptoDetailsViewModelTests.swift
 //  BitcoinRateDemoTests
 //
 //  Created by Salar on 3/8/26.
@@ -10,10 +10,10 @@ import Foundation
 @testable import BitcoinRateDemo
 
 @MainActor
-struct PriceDetailsViewModelTests {
+struct CryptoDetailsViewModelTests {
     @Test("initial state is loading")
     func initialStateIsLoading() {
-        let sut = PriceDetailsViewModel(loader: { throw CryptoRepositoryError.unexpected })
+        let sut = CryptoDetailsViewModel(loader: { throw CryptoRepositoryError.unexpected })
 
         guard case .loading = sut.state else {
             Issue.record("Expected .loading initial state")
@@ -24,8 +24,8 @@ struct PriceDetailsViewModelTests {
     @Test("load() maps HistoryDetails into formatted DetailsViewItem")
     func loadMapsToViewItem() async {
         let date = Date(timeIntervalSince1970: 1_700_000_000)
-        let details = PriceDetails(name: "Bitcoin", eurPrice: 44_000, usdPrice: 47_000, gbpPrice: 37_000, lastUpdate: date)
-        let sut = PriceDetailsViewModel(loader: { details })
+        let details = CryptoDetails(name: "Bitcoin", eurPrice: 44_000, usdPrice: 47_000, gbpPrice: 37_000, lastUpdate: date)
+        let sut = CryptoDetailsViewModel(loader: { details })
 
         await sut.load()
 
@@ -47,8 +47,8 @@ struct PriceDetailsViewModelTests {
     @Test("load() shows dash for nil prices")
     func loadShowsDashForNilPrices() async {
         let date = Date(timeIntervalSince1970: 1_700_000_000)
-        let details = PriceDetails(name: "Bitcoin", eurPrice: nil, usdPrice: nil, gbpPrice: nil, lastUpdate: date)
-        let sut = PriceDetailsViewModel(loader: { details })
+        let details = CryptoDetails(name: "Bitcoin", eurPrice: nil, usdPrice: nil, gbpPrice: nil, lastUpdate: date)
+        let sut = CryptoDetailsViewModel(loader: { details })
 
         await sut.load()
 
@@ -63,7 +63,7 @@ struct PriceDetailsViewModelTests {
 
     @Test("load() transitions to failure on error")
     func loadFailure() async {
-        let sut = PriceDetailsViewModel(loader: { throw CryptoRepositoryError.serverError(statusCode: 500) })
+        let sut = CryptoDetailsViewModel(loader: { throw CryptoRepositoryError.serverError(statusCode: 500) })
 
         await sut.load()
 

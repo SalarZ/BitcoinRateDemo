@@ -1,5 +1,5 @@
 //
-//  CurrentPriceCardViewModelTests.swift
+//  LivePriceCardViewModelTests.swift
 //  BitcoinRateDemoTests
 //
 //  Created by Salar on 3/7/26.
@@ -10,7 +10,7 @@ import Foundation
 @testable import BitcoinRateDemo
 
 @MainActor
-struct CurrentPriceCardViewModelTests {
+struct LivePriceCardViewModelTests {
 
     @Test("initial state is loading")
     func initialStateIsLoading() async throws {
@@ -137,9 +137,9 @@ struct CurrentPriceCardViewModelTests {
     private func makeSUT(result: Result<CryptoPrice, Error> = .success(Self.makeResult()),
                          refreshInterval: TimeInterval = 1,
                          onSelection: @escaping (String) -> Void = { _ in }
-    ) -> (sut: CurrentPriceCardViewModel, useCase: MockCryptoCurrentPriceUseCase) {
+    ) -> (sut: LivePriceCardViewModel, useCase: MockCryptoCurrentPriceUseCase) {
         let useCase = MockCryptoCurrentPriceUseCase(result: result)
-        let sut = CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: useCase, refreshInterval: refreshInterval, onSelection: onSelection)
+        let sut = LivePriceCardViewModel(getCryptoCurrentPriceUseCase: useCase, refreshInterval: refreshInterval, onSelection: onSelection)
 
         return (sut, useCase)
     }

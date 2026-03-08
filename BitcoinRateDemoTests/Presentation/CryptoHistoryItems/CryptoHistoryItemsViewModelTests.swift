@@ -1,5 +1,5 @@
 //
-//  BitcoinHistoryItemsViewModelTests.swift
+//  CryptoHistoryItemsViewModelTests.swift
 //  BitcoinRateDemoTests
 //
 //  Created by Salar on 3/7/26.
@@ -10,7 +10,7 @@ import Testing
 @testable import BitcoinRateDemo
 
 @MainActor
-struct BitcoinHistoryItemsViewModelTests {
+struct CryptoHistoryItemsViewModelTests {
 
     @Test("initial state is loading")
     func initialStateIsLoading() {
@@ -120,9 +120,9 @@ struct BitcoinHistoryItemsViewModelTests {
     // MARK: - Helpers
     private func makeSUT(result: Result<[CryptoPrice], Error> = .success([]),
                          onSelection: @escaping (CryptoPrice) -> Void = { _ in }
-    ) -> (sut: BitcoinHistoryItemsViewModel, useCase: MockCryptoPriceHistoryUseCase) {
+    ) -> (sut: CryptoHistoryItemsViewModel, useCase: MockCryptoPriceHistoryUseCase) {
         let useCase = MockCryptoPriceHistoryUseCase(result: result)
-        let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: useCase, onSelection: onSelection)
+        let sut = CryptoHistoryItemsViewModel(getCryptoHistoryUseCase: useCase, onSelection: onSelection)
 
         return (sut, useCase)
     }

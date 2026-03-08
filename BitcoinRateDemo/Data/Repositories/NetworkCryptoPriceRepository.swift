@@ -55,7 +55,7 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
         }
     }
 
-    func priceDetails(coinId: String, date: Date) async throws -> PriceDetails {
+    func priceDetails(coinId: String, date: Date) async throws -> CryptoDetails {
         let formattedDate = date.apiDateFormat
 
         let request = APIRequest(

@@ -1,5 +1,5 @@
 //
-//  PriceDetailsView.swift
+//  CryptoDetailsView.swift
 //  BitcoinRateDemo
 //
 //  Created by Salar on 3/7/26.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct PriceDetailsView: View {
-    @StateObject private var viewModel: PriceDetailsViewModel
+struct CryptoDetailsView: View {
+    @StateObject private var viewModel: CryptoDetailsViewModel
 
-    init(viewModel: PriceDetailsViewModel) {
+    init(viewModel: CryptoDetailsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
@@ -58,8 +58,8 @@ struct PriceDetailsView: View {
 }
 
 #Preview {
-    PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {
-        PriceDetails(name: "bitcoin",
+    CryptoDetailsView(viewModel: CryptoDetailsViewModel(loader: {
+        CryptoDetails(name: "bitcoin",
                      eurPrice: 1_000.21,
                      usdPrice: 1_200.21,
                      gbpPrice: 802,

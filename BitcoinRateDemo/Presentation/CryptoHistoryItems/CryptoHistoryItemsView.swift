@@ -1,5 +1,5 @@
 //
-//  BitcoinHistoryItemsView.swift
+//  CryptoHistoryItemsView.swift
 //  BitcoinRateDemo
 //
 //  Created by Salar on 3/7/26.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct BitcoinHistoryItemsView: View {
-    @StateObject private var viewModel: BitcoinHistoryItemsViewModel
+struct CryptoHistoryItemsView: View {
+    @StateObject private var viewModel: CryptoHistoryItemsViewModel
 
-    init(viewModel: BitcoinHistoryItemsViewModel) {
+    init(viewModel: CryptoHistoryItemsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
@@ -57,11 +57,11 @@ struct BitcoinHistoryItemsView: View {
 }
 
 #Preview("Success state") {
-    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(), onSelection: { _ in }))
+    CryptoHistoryItemsView(viewModel: CryptoHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(), onSelection: { _ in }))
 }
 
 #Preview("Failue state") {
-    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false), onSelection: { _ in }))
+    CryptoHistoryItemsView(viewModel: CryptoHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false), onSelection: { _ in }))
 }
 
 struct MockCryptoHistoryUseCase: CryptoPriceHistoryUseCase {

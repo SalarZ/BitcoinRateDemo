@@ -1,5 +1,5 @@
 //
-//  CurrentPriceCardViewModel.swift
+//  LivePriceCardViewModel.swift
 //  BitcoinRateDemo
 //
 //  Created by Salar on 3/7/26.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @MainActor
-final class CurrentPriceCardViewModel: ObservableObject {
+final class LivePriceCardViewModel: ObservableObject {
 
     enum State: Equatable {
         case loading

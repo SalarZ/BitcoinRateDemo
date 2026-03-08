@@ -1,5 +1,5 @@
 //
-//  PriceDetailsViewModel.swift
+//  CryptoDetailsViewModel.swift
 //  BitcoinRateDemo
 //
 //  Created by Salar on 3/7/26.
@@ -10,15 +10,15 @@ import OSLog
 import Combine
 
 @MainActor
-final class PriceDetailsViewModel: ObservableObject {
+final class CryptoDetailsViewModel: ObservableObject {
     @Published private(set) var state: ViewState<PriceDetailsItem> = .loading
 
     private static let logger = Logger(subsystem: AppConstants.Logging.subsystem,
                                        category: "DetailsViewModel")
 
-    private let loader: () async throws -> PriceDetails
+    private let loader: () async throws -> CryptoDetails
 
-    init(loader: @escaping () async throws -> PriceDetails) {
+    init(loader: @escaping () async throws -> CryptoDetails) {
         self.loader = loader
     }
 
@@ -32,7 +32,7 @@ final class PriceDetailsViewModel: ObservableObject {
         }
     }
 
-    private func detailsViewItem(from details: PriceDetails) -> PriceDetailsItem {
+    private func detailsViewItem(from details: CryptoDetails) -> PriceDetailsItem {
         PriceDetailsItem(
             date: details.lastUpdate.yearMonthDayFormatted,
             eurPrice: details.eurPrice?.currencyFormatted(code: AppConstants.Currency.eur) ?? "-",

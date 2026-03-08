@@ -14,8 +14,8 @@ final class MockCryptoPriceRepository: CryptoPriceRepository {
     var livePriceResult: Result<LivePrice, Error> = .success(
         LivePrice(name: "bitcoin", prices: [:], lastUpdate: .now)
     )
-    var priceDetailsResult: Result<PriceDetails, Error> = .success(
-        PriceDetails(name: "bitcoin", eurPrice: 1_000, usdPrice: 1_200, gbpPrice: 800, lastUpdate: Date.now)
+    var priceDetailsResult: Result<CryptoDetails, Error> = .success(
+        CryptoDetails(name: "bitcoin", eurPrice: 1_000, usdPrice: 1_200, gbpPrice: 800, lastUpdate: Date.now)
     )
 
     private(set) var historicalPricesCalls: [(coinId: String, currency: String, days: Int)] = []
@@ -33,7 +33,7 @@ final class MockCryptoPriceRepository: CryptoPriceRepository {
         return try livePriceResult.get()
     }
 
-    func priceDetails(coinId: String, date: Date) async throws -> PriceDetails {
+    func priceDetails(coinId: String, date: Date) async throws -> CryptoDetails {
         priceDetailsCalls.append((coinId, date))
         return try priceDetailsResult.get()
     }

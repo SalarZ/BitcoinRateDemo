@@ -1,5 +1,5 @@
 //
-//  CurrentPriceCardView.swift
+//  LivePriceCardView.swift
 //  BitcoinRateDemo
 //
 //  Created by Salar on 3/7/26.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct CurrentPriceCardView: View {
-    @ObservedObject var viewModel: CurrentPriceCardViewModel
+struct LivePriceCardView: View {
+    @ObservedObject var viewModel: LivePriceCardViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -108,21 +108,21 @@ struct CurrentPriceCardView: View {
 }
 
 #Preview("Success state") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(), onSelection: { _ in }))
+    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(), onSelection: { _ in }))
 
 }
 
 #Preview("Stale state") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCaseStaleState(), refreshInterval: 1, onSelection: { _ in }))
+    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCaseStaleState(), refreshInterval: 1, onSelection: { _ in }))
 
 }
 
 #Preview("Failure state") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: false), onSelection: { _ in }))
+    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: false), onSelection: { _ in }))
 }
 
 #Preview("Refresh") {
-    CurrentPriceCardView(viewModel: CurrentPriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: true), refreshInterval: 5, onSelection: { _ in }))
+    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: true), refreshInterval: 5, onSelection: { _ in }))
 }
 
 final class MockGetCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {

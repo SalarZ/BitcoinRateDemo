@@ -6,7 +6,7 @@
 //
 
 protocol CryptoLivePriceDetailsUseCase {
-    func execute(coinId: String) async throws -> PriceDetails
+    func execute(coinId: String) async throws -> CryptoDetails
 }
 
 struct DefaultLivePriceDetailsUseCase: CryptoLivePriceDetailsUseCase {
@@ -16,9 +16,9 @@ struct DefaultLivePriceDetailsUseCase: CryptoLivePriceDetailsUseCase {
         self.repository = repository
     }
 
-    func execute(coinId: String) async throws -> PriceDetails {
+    func execute(coinId: String) async throws -> CryptoDetails {
         let response = try await repository.livePrice(coinId: coinId, currencies: AppConstants.Currency.detailCurrencies)
-        return PriceDetails(name: coinId,
+        return CryptoDetails(name: coinId,
                             eurPrice: response.prices[AppConstants.Currency.eur],
                             usdPrice: response.prices[AppConstants.Currency.usd],
                             gbpPrice: response.prices[AppConstants.Currency.gbp],

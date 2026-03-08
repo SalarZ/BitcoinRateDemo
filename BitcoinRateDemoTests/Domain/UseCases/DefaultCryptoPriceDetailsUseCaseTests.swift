@@ -14,7 +14,7 @@ struct DefaultCryptoPriceDetailsUseCaseTests {
     @Test("passes through HistoryDetails from repository unchanged")
     func passesThroughHistoryDetails() async throws {
         let expectedDate = Date(timeIntervalSince1970: 1_700_000_000)
-        let expected = PriceDetails(name: "bitcoin", eurPrice: 44_000, usdPrice: 47_000, gbpPrice: 38_000, lastUpdate: expectedDate)
+        let expected = CryptoDetails(name: "bitcoin", eurPrice: 44_000, usdPrice: 47_000, gbpPrice: 38_000, lastUpdate: expectedDate)
         let repo = MockCryptoPriceRepository()
         repo.priceDetailsResult = .success(expected)
         let sut = DefaultCryptoPriceDetailsUseCase(repository: repo)

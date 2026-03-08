@@ -36,8 +36,8 @@ struct MarketDataDTO: Decodable {
 }
 
 extension CoinDetailsDTO {
-    func toPriceDetails(for date: Date) -> PriceDetails {
-        return PriceDetails(name: name,
+    func toPriceDetails(for date: Date) -> CryptoDetails {
+        return CryptoDetails(name: name,
                             eurPrice: marketData.currentPrice["eur"],
                             usdPrice: marketData.currentPrice["usd"],
                             gbpPrice: marketData.currentPrice["gbp"],
