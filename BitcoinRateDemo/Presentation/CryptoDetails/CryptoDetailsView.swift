@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct CryptoDetailsView: View {
+    private enum Constants {
+        static let spacing: CGFloat = 16
+        static let cornerRadius: CGFloat = 8
+    }
+
     @StateObject private var viewModel: CryptoDetailsViewModel
 
     init(viewModel: CryptoDetailsViewModel) {
@@ -15,7 +20,7 @@ struct CryptoDetailsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Constants.spacing) {
             switch viewModel.state {
             case .loading:
                 ProgressView()
@@ -31,7 +36,7 @@ struct CryptoDetailsView: View {
                 }
                 .padding()
                 .background(.thickMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
             case .failure(let error):
                 ErrorView(message: error) {
                     await viewModel.load()

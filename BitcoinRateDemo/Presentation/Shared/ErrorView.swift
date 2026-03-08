@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct ErrorView: View {
+    private enum Constants {
+        static let spacing: CGFloat = 12
+    }
+
     private let message: String
     private let retryAction: () async throws -> Void
 
@@ -17,7 +21,7 @@ struct ErrorView: View {
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: Constants.spacing) {
             Text(String(localized: "error.failed.to.load"))
                 .font(.headline)
             Text(message)

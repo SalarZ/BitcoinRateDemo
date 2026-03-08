@@ -8,6 +8,13 @@
 import SwiftUI
 
 struct LivePriceCardView: View {
+    private enum Constants {
+        static let outerSpacing: CGFloat = 10
+        static let innerSpacing: CGFloat = 4
+        static let badgeSpacing: CGFloat = 8
+        static let retryIcon = "arrow.clockwise"
+    }
+
     @StateObject private var viewModel: LivePriceCardViewModel
 
     init(viewModel: LivePriceCardViewModel) {
@@ -15,9 +22,9 @@ struct LivePriceCardView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Constants.outerSpacing) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Constants.innerSpacing) {
                     Text("price.card.label")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -31,7 +38,7 @@ struct LivePriceCardView: View {
 
                 Spacer()
 
-                HStack(spacing: 8) {
+                HStack(spacing: Constants.badgeSpacing) {
                     if let badge = badgeText {
                         BadgeView(text: badge)
                     }
@@ -61,7 +68,7 @@ struct LivePriceCardView: View {
 
             case .failure(let err):
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Constants.innerSpacing) {
                         Text("price.card.failed")
                             .font(.footnote)
                             .fontWeight(.semibold)
@@ -106,7 +113,7 @@ struct LivePriceCardView: View {
             Button {
                 Task { await viewModel.manualRetry() }
             } label: {
-                Image(systemName: "arrow.clockwise")
+                Image(systemName: Constants.retryIcon)
             }
         }
     }
