@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LivePriceViewItem: Identifiable, Equatable {
+struct LivePriceViewItem: Equatable {
     let id = UUID()
     let price: String
     let lastUpdated: String
