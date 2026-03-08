@@ -21,7 +21,7 @@ struct AppCoordinatorTests {
 
     @Test
     func navigateToPriceDetails_updatesActiveRoute() async throws {
-        let price = PricePoint(date: .now, price: 12, coinId: "bitcoin")
+        let price = CryptoPrice(date: .now, price: 12, coinId: "bitcoin")
         let sut = AppCoordinator()
 
         sut.navigate(to: .priceDetails(price))
@@ -31,7 +31,7 @@ struct AppCoordinatorTests {
 
     @Test
     func pop_setsActiveRouteToNil() async throws {
-        let price = PricePoint(date: .now, price: 12, coinId: "bitcoin")
+        let price = CryptoPrice(date: .now, price: 12, coinId: "bitcoin")
         let sut = AppCoordinator()
         sut.navigate(to: .priceDetails(price))
 

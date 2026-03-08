@@ -9,7 +9,7 @@ import Foundation
 @testable import BitcoinRateDemo
 
 final class MockCryptoPriceRepository: CryptoPriceRepository {
-    var historicalPricesResult: Result<[PricePoint], Error> = .success([])
+    var historicalPricesResult: Result<[CryptoPrice], Error> = .success([])
 
     var livePriceResult: Result<LivePrice, Error> = .success(
         LivePrice(name: "bitcoin", prices: [:], lastUpdate: .now)
@@ -23,7 +23,7 @@ final class MockCryptoPriceRepository: CryptoPriceRepository {
     private(set) var priceDetailsCalls: [(coinId: String, date: Date)] = []
 
 
-    func historicalPrices(coinId: String, currency: String, days: Int) async throws -> [PricePoint] {
+    func historicalPrices(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice] {
         historicalPricesCalls.append((coinId, currency, days))
         return try historicalPricesResult.get()
     }

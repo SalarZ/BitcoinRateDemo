@@ -38,11 +38,11 @@ struct BitcoinHistoryItemsViewModelTests {
     @Test("load() transitions to success with mapped PriceRows")
     func loadSuccess() async {
         let fixedDate = Date(timeIntervalSince1970: 1_700_000_000)
-        let points = [
-            PricePoint(date: fixedDate, price: 40_000, coinId: "bitcoin"),
-            PricePoint(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
+        let cryptoPrices = [
+            CryptoPrice(date: fixedDate, price: 40_000, coinId: "bitcoin"),
+            CryptoPrice(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
         ]
-        let (sut, _) = makeSUT(result: .success(points))
+        let (sut, _) = makeSUT(result: .success(cryptoPrices))
 
         await sut.load()
 
@@ -52,8 +52,8 @@ struct BitcoinHistoryItemsViewModelTests {
         }
         #expect(rows.count == 2)
         #expect(!rows[0].id.uuidString.isEmpty)
-        #expect(rows[0].formattedDate == points[0].date.yearMonthDayFormatted)
-        #expect(rows[0].formattedPrice == points[0].price.currencyFormatted(code: AppConstants.Currency.eur))
+        #expect(rows[0].formattedDate == cryptoPrices[0].date.yearMonthDayFormatted)
+        #expect(rows[0].formattedPrice == cryptoPrices[0].price.currencyFormatted(code: AppConstants.Currency.eur))
     }
 
     @Test("load() transitions to failure on error")
@@ -96,13 +96,13 @@ struct BitcoinHistoryItemsViewModelTests {
     @Test("itemSelect triggers onSelection closure")
     func itemSelectTriggersOnSelection() async {
         let fixedDate = Date(timeIntervalSince1970: 1_700_000_000)
-        let points = [
-            PricePoint(date: fixedDate, price: 40_000, coinId: "bitcoin"),
-            PricePoint(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
+        let cryptoPrices = [
+            CryptoPrice(date: fixedDate, price: 40_000, coinId: "bitcoin"),
+            CryptoPrice(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
         ]
         await confirmation { confirmation in
-            let (sut, _) = makeSUT(result: .success(points)) { item in
-                #expect(item == points.last)
+            let (sut, _) = makeSUT(result: .success(cryptoPrices)) { item in
+                #expect(item == cryptoPrices.last)
                 confirmation.confirm()
             }
 
@@ -118,8 +118,8 @@ struct BitcoinHistoryItemsViewModelTests {
     }
 
     // MARK: - Helpers
-    private func makeSUT(result: Result<[PricePoint], Error> = .success([]),
-                         onSelection: @escaping (PricePoint) -> Void = { _ in }
+    private func makeSUT(result: Result<[CryptoPrice], Error> = .success([]),
+                         onSelection: @escaping (CryptoPrice) -> Void = { _ in }
     ) -> (sut: BitcoinHistoryItemsViewModel, useCase: MockCryptoPriceHistoryUseCase) {
         let useCase = MockCryptoPriceHistoryUseCase(result: result)
         let sut = BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: useCase, onSelection: onSelection)
@@ -138,13 +138,13 @@ final class MockCryptoPriceHistoryUseCase: CryptoPriceHistoryUseCase {
     private(set) var executeCalls: [(String, String, Int)] = []
     private var delayMode: DelayMode = .none
 
-    var result: Result<[PricePoint], Error>
+    var result: Result<[CryptoPrice], Error>
 
-    init(result: Result<[PricePoint], Error> = .success([])) {
+    init(result: Result<[CryptoPrice], Error> = .success([])) {
         self.result = result
     }
 
-    func execute(coinId: String, currency: String, days: Int) async throws -> [PricePoint] {
+    func execute(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice] {
         executeCalls.append((coinId, currency, days))
         try await applyDelay()
         return try result.get()

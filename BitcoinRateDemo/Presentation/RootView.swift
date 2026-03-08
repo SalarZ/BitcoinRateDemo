@@ -42,9 +42,9 @@ struct RootView: View {
     @ViewBuilder
     private var destinationView: some View {
         switch coordinator.activeRoute {
-        case .priceDetails(let pricePoint):
+        case .priceDetails(let price):
             PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {
-                try await container.priceDetailsUseCase.execute(coinId: pricePoint.coinId, date: pricePoint.date)
+                try await container.priceDetailsUseCase.execute(coinId: price.coinId, date: price.date)
             }))
         case .livePriceDetails(let coinId):
             PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {

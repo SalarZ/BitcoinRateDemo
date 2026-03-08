@@ -73,11 +73,11 @@ struct MockCryptoHistoryUseCase: CryptoPriceHistoryUseCase {
         self.isSuccess = isSuccess
     }
 
-    func execute(coinId: String, currency: String, days: Int) async throws -> [PricePoint] {
+    func execute(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice] {
         try? await Task.sleep(seconds: delayDuration)
         guard isSuccess else { throw NSError(domain: "", code: 0, userInfo: nil)}
         return (0..<days).map { i in
-            PricePoint(date: makeDate(daysAgo: i), price: Double(i), coinId: "bitcoin")
+            CryptoPrice(date: makeDate(daysAgo: i), price: Double(i), coinId: "bitcoin")
         }
     }
 

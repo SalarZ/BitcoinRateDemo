@@ -134,7 +134,7 @@ struct CurrentPriceCardViewModelTests {
     }
 
     // MARK: - Helpers
-    private func makeSUT(result: Result<PricePoint, Error> = .success(Self.makeResult()),
+    private func makeSUT(result: Result<CryptoPrice, Error> = .success(Self.makeResult()),
                          refreshInterval: TimeInterval = 1,
                          onSelection: @escaping (String) -> Void = { _ in }
     ) -> (sut: CurrentPriceCardViewModel, useCase: MockCryptoCurrentPriceUseCase) {
@@ -144,8 +144,8 @@ struct CurrentPriceCardViewModelTests {
         return (sut, useCase)
     }
 
-    private static func makeResult(date: Date = .now, price: Double = 123.123, coinId: String = "btc") -> PricePoint {
-        PricePoint(date: date, price: price, coinId: coinId)
+    private static func makeResult(date: Date = .now, price: Double = 123.123, coinId: String = "btc") -> CryptoPrice {
+        CryptoPrice(date: date, price: price, coinId: coinId)
     }
 }
 
@@ -159,13 +159,13 @@ private final class MockCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
     private(set) var executeCalls: [(String, String)] = []
     private var delayMode: DelayMode = .none
 
-    var result: Result<PricePoint, Error>
+    var result: Result<CryptoPrice, Error>
 
-    init(result: Result<PricePoint, Error>) {
+    init(result: Result<CryptoPrice, Error>) {
         self.result = result
     }
 
-    func execute(coinId: String, currency: String) async throws -> PricePoint {
+    func execute(coinId: String, currency: String) async throws -> CryptoPrice {
         executeCalls.append((coinId, currency))
         try await applyDelay()
         return try result.get()

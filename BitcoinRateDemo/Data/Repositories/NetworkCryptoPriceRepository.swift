@@ -18,7 +18,7 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
         self.networkClient = networkClient
     }
 
-    func historicalPrices(coinId: String, currency: String, days: Int) async throws -> [PricePoint] {
+    func historicalPrices(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice] {
         let request = APIRequest(
             path: "coins/\(coinId)/market_chart",
             queryItems: [
@@ -30,7 +30,7 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
 
         do {
             let marketChart: MarketChartDTO = try await networkClient.send(request)
-            return try marketChart.toPricePoints(coinId: coinId)
+            return try marketChart.toCryptoPrice(coinId: coinId)
         } catch {
             throw mapped(error, context: "historicalPrices coinId=\(coinId)")
         }

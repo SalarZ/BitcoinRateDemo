@@ -14,11 +14,11 @@ struct DefaultCryptoPriceHistoryUseCaseTests {
     @Test("strips today and reverses order")
     func stripsAndReverses() async throws {
         let days = 14
-        let points: [PricePoint] = (0..<days).map { i in
-            PricePoint(date: makeDate(daysAgo: i), price: Double(i), coinId: "bitcoin")
+        let cryptoPrices: [CryptoPrice] = (0..<days).map { i in
+            CryptoPrice(date: makeDate(daysAgo: i), price: Double(i), coinId: "bitcoin")
         }
         let repo = MockCryptoPriceRepository()
-        repo.historicalPricesResult = .success(points)
+        repo.historicalPricesResult = .success(cryptoPrices)
         let sut = DefaultCryptoPriceHistoryUseCase(repository: repo)
 
         let result = try await sut.execute(coinId: "bitcoin", currency: "eur", days: days)

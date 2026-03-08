@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CryptoPriceHistoryUseCase {
-    func execute(coinId: String, currency: String, days: Int) async throws -> [PricePoint]
+    func execute(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice]
 }
 
 struct DefaultCryptoPriceHistoryUseCase: CryptoPriceHistoryUseCase {
@@ -19,7 +19,7 @@ struct DefaultCryptoPriceHistoryUseCase: CryptoPriceHistoryUseCase {
         self.repository = repository
     }
 
-    func execute(coinId: String, currency: String, days: Int) async throws -> [PricePoint] {
+    func execute(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice] {
         let history = try await repository.historicalPrices(coinId: coinId, currency: currency, days: days)
 
         /// Remove **today** from the list.

@@ -12,7 +12,7 @@ import Foundation
 struct NetworkCryptoPriceRepositoryTests {
 
     // MARK: - historicalPrices
-    @Test("historicalPrices returns converted price points and builds correct request")
+    @Test("historicalPrices returns converted prices and builds correct request")
     func historicalPrices_success() async throws {
         let expectedCoinId = "bitcoin"
         let expectedCurrency = "usd"
@@ -36,7 +36,7 @@ struct NetworkCryptoPriceRepositoryTests {
         #expect(request.queryItems.contains(URLQueryItem(name: "days", value: "\(expectedDays)")))
         #expect(request.queryItems.contains(URLQueryItem(name: "interval", value: "daily")))
         #expect(request.queryItems.contains(URLQueryItem(name: "precision", value: "full")))
-        let expected = try dto.toPricePoints(coinId: expectedCoinId)
+        let expected = try dto.toCryptoPrice(coinId: expectedCoinId)
         #expect(result == expected)
     }
 

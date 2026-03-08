@@ -13,15 +13,15 @@ struct DefaultCryptoCurrentPriceUseCaseTests {
 
     private let fixedDate = Date(timeIntervalSince1970: 1_700_000_000)
 
-    @Test("returns correct PricePoint for requested currency")
-    func returnsPricePoint() async throws {
+    @Test("returns correct CryptoPrice for requested currency")
+    func returnsCryptoPrice() async throws {
         let repo = MockCryptoPriceRepository()
         repo.livePriceResult = .success(
             LivePrice(name: "bitcoin", prices: ["eur": 45_000.0, "usd": 48_000.0], lastUpdate: fixedDate)
         )
         let sut = DefaultCryptoCurrentPriceUseCase(repository: repo)
 
-        let point = try await sut.execute(coinId: "bitcoin", currency: "eur")
+        let crypto = try await sut.execute(coinId: "bitcoin", currency: "eur")
 
         #expect(repo.livePriceCalls.count == 1)
 
@@ -29,9 +29,9 @@ struct DefaultCryptoCurrentPriceUseCaseTests {
         #expect(firstCallItem.coinId == "bitcoin")
         #expect(firstCallItem.currencies == ["eur"])
 
-        #expect(point.price == 45_000.0)
-        #expect(point.coinId == "bitcoin")
-        #expect(point.date == fixedDate)
+        #expect(crypto.price == 45_000.0)
+        #expect(crypto.coinId == "bitcoin")
+        #expect(crypto.date == fixedDate)
     }
 
     @Test("throws when requested currency is missing from response")

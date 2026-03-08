@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CryptoCurrentPriceUseCase {
-    func execute(coinId: String, currency: String) async throws -> PricePoint
+    func execute(coinId: String, currency: String) async throws -> CryptoPrice
 }
 
 struct DefaultCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
@@ -18,13 +18,13 @@ struct DefaultCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
         self.repository = repository
     }
 
-    func execute(coinId: String, currency: String) async throws -> PricePoint {
+    func execute(coinId: String, currency: String) async throws -> CryptoPrice {
         let response = try await repository.livePrice(coinId: coinId, currencies: [currency])
         guard let price = response.prices[currency] else {
             // TODO: Move it to an enum
             throw NSError(domain: "invalid", code: 0)
         }
 
-        return PricePoint(date: response.lastUpdate, price: price, coinId: coinId)
+        return CryptoPrice(date: response.lastUpdate, price: price, coinId: coinId)
     }
 }

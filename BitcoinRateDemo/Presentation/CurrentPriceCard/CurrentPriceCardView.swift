@@ -134,10 +134,10 @@ final class MockGetCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
         self.isSuccess = isSuccess
     }
 
-    func execute(coinId: String, currency: String) async throws -> PricePoint {
+    func execute(coinId: String, currency: String) async throws -> CryptoPrice {
         try? await Task.sleep(seconds: delayDuration)
         guard isSuccess else { throw NSError(domain: "", code: 0, userInfo: nil)}
-        return PricePoint(date: Date.now, price: 1234.1234, coinId: "bitcoin")
+        return CryptoPrice(date: Date.now, price: 1234.1234, coinId: "bitcoin")
     }
 }
 
@@ -149,7 +149,7 @@ final class MockGetCryptoCurrentPriceUseCaseStaleState: CryptoCurrentPriceUseCas
         self.delayDuration = delayDuration
     }
 
-    func execute(coinId: String, currency: String) async throws -> PricePoint {
+    func execute(coinId: String, currency: String) async throws -> CryptoPrice {
         try? await Task.sleep(seconds: delayDuration)
         guard !executeCalled else {
             executeCalled.toggle()
@@ -157,6 +157,6 @@ final class MockGetCryptoCurrentPriceUseCaseStaleState: CryptoCurrentPriceUseCas
         }
 
         executeCalled.toggle()
-        return PricePoint(date: Date.now, price: 1234.1234, coinId: "bitcoin")
+        return CryptoPrice(date: Date.now, price: 1234.1234, coinId: "bitcoin")
     }
 }
