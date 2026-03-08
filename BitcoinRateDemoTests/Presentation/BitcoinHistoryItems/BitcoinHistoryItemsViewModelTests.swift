@@ -42,7 +42,7 @@ struct BitcoinHistoryItemsViewModelTests {
             PricePoint(date: fixedDate, price: 40_000, coinId: "bitcoin"),
             PricePoint(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
         ]
-        let (sut, useCase) = makeSUT(result: .success(points))
+        let (sut, _) = makeSUT(result: .success(points))
 
         await sut.load()
 

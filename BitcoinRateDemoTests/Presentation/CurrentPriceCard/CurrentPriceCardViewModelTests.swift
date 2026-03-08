@@ -49,7 +49,7 @@ struct CurrentPriceCardViewModelTests {
     @Test("start() transitions to success with mapped PriceRows")
     func startSuccess() async {
         let anyResult = Self.makeResult()
-        let (sut, useCase) = makeSUT(result: .success(anyResult))
+        let (sut, _) = makeSUT(result: .success(anyResult))
 
         sut.start()
 
@@ -68,7 +68,7 @@ struct CurrentPriceCardViewModelTests {
     @Test("start() transitions to failure on error")
     func startFailure() async {
         let anyError = NSError(domain: "any-error", code: 0)
-        let (sut, useCase) = makeSUT(result: .failure(anyError))
+        let (sut, _) = makeSUT(result: .failure(anyError))
 
         sut.start()
 
@@ -83,19 +83,19 @@ struct CurrentPriceCardViewModelTests {
 
     @Test("start() transitions to failure on error")
     func startTriggersRefreshing() async {
-        let anyResult = Self.makeResult()
-        let (sut, useCase) = makeSUT(refreshInterval: 0.1)
+        _ = Self.makeResult()
+        let (sut, useCase) = makeSUT(refreshInterval: 0.01)
 
         sut.start()
 
-        try? await Task.sleep(seconds: 0.18)
+        try? await Task.sleep(seconds: 0.018)
 
         #expect(useCase.executeCalls.count == 2)
     }
 
     @Test("manualRetry() triggers a price refresh")
     func manualRetryTriggersRefresh() async {
-        let anyResult = Self.makeResult()
+        _ = Self.makeResult()
         let (sut, useCase) = makeSUT()
 
         await sut.manualRetry()

@@ -89,10 +89,17 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
 
 extension Date {
     var apiDateFormat: String {
-        self.formatted(
-            .verbatim("\(day: .twoDigits)-\(month: .twoDigits)-\(year: .defaultDigits)" as Date.FormatString,
-                      locale: .init(identifier: "en_US_POSIX"),
-                      timeZone: .current,
-                      calendar: .current))
+        if #available(iOS 16.0, *) {
+            return formatted(
+                .verbatim("\(day: .twoDigits)-\(month: .twoDigits)-\(year: .defaultDigits)" as Date.FormatString,
+                          locale: .init(identifier: "en_US_POSIX"),
+                          timeZone: .current,
+                          calendar: .current))
+        } else {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd-MM-yyyy"
+            dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+            return dateFormatter.string(from: self)
+        }
     }
 }
