@@ -21,19 +21,19 @@ struct CryptoHistoryItemsView: View {
                 loadingView
             case .success(let items):
 
-                    ForEach(items) { item in
-                        HStack {
-                            Text(item.formattedDate)
-                            Spacer()
-                            Text(item.formattedPrice)
-                                .monospacedDigit()
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            item.onSelect()
-                        }
+                ForEach(items) { item in
+                    HStack {
+                        Text(item.date)
+                        Spacer()
+                        Text(item.price)
+                            .monospacedDigit()
                     }
-                
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        item.onSelect()
+                    }
+                }
+
             case .failure(let error):
                 ErrorView(message: error) {
                     await viewModel.load()
@@ -57,32 +57,21 @@ struct CryptoHistoryItemsView: View {
 }
 
 #Preview("Success state") {
-    CryptoHistoryItemsView(viewModel: CryptoHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(), onSelection: { _ in }))
+    CryptoHistoryItemsView(
+        viewModel:
+            CryptoHistoryItemsViewModel(
+                getCryptoHistoryUseCase: PreviewMocks.getCryptoHistoryUseCase(),
+                onSelection: { _ in }
+            )
+    )
 }
 
 #Preview("Failue state") {
-    CryptoHistoryItemsView(viewModel: CryptoHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false), onSelection: { _ in }))
-}
-
-struct MockCryptoHistoryUseCase: CryptoPriceHistoryUseCase {
-    var delayDuration: TimeInterval
-    var isSuccess: Bool
-
-    init(delayDuration: TimeInterval = 1.0, isSuccess: Bool = true) {
-        self.delayDuration = delayDuration
-        self.isSuccess = isSuccess
-    }
-
-    func execute(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice] {
-        try? await Task.sleep(seconds: delayDuration)
-        guard isSuccess else { throw NSError(domain: "", code: 0, userInfo: nil)}
-        return (0..<days).map { i in
-            CryptoPrice(date: makeDate(daysAgo: i), price: Double(i), coinId: "bitcoin")
-        }
-    }
-
-    private func makeDate(daysAgo: Int) -> Date {
-        Calendar.current.date(byAdding: .day, value: -daysAgo, to: .now)!
-    }
-
+    CryptoHistoryItemsView(
+        viewModel:
+            CryptoHistoryItemsViewModel(
+                getCryptoHistoryUseCase: PreviewMocks.getCryptoHistoryUseCase(mode: .failure),
+                onSelection: { _ in }
+            )
+    )
 }

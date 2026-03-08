@@ -35,8 +35,8 @@ final class CryptoHistoryItemsViewModel: ObservableObject {
     }
 
     private func makePriceRow(from item: CryptoPrice) -> PriceRow {
-        PriceRow(formattedDate: item.date.yearMonthDayFormatted,
-                 formattedPrice: item.price.currencyFormatted(code: AppConstants.Currency.eur),
+        PriceRow(date: item.date.yearMonthDayFormatted,
+                 price: item.price.currencyFormatted(code: AppConstants.Currency.eur),
         onSelect: { [weak self] in
             self?.onSelection(item)
         })

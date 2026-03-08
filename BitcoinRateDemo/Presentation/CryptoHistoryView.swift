@@ -35,9 +35,14 @@ struct CryptoHistoryView: View {
 
 #Preview {
     CryptoHistoryView(
-        cryptoHistoryItemsViewModel: CryptoHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(),
-                                                                 onSelection: { _ in }),
-        livePriceCardViewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(),
-                                                       onSelection: { _ in })
+        cryptoHistoryItemsViewModel:
+            CryptoHistoryItemsViewModel(
+                getCryptoHistoryUseCase: PreviewMocks.getCryptoHistoryUseCase(),
+                onSelection: { _ in }
+            ),
+        livePriceCardViewModel:
+            LivePriceCardViewModel(
+                getCryptoCurrentPriceUseCase: PreviewMocks.getCryptoCurrentPriceUseCase(),
+                onSelection: { _ in })
         )
 }

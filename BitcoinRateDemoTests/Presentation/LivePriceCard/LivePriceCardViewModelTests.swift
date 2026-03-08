@@ -62,7 +62,7 @@ struct LivePriceCardViewModelTests {
 
         #expect(!item.id.uuidString.isEmpty)
         #expect(item.lastUpdated == anyResult.date.hourMinuteSecondFormatted)
-        #expect(item.priceText == anyResult.price.currencyFormatted(code: AppConstants.Currency.eur))
+        #expect(item.price == anyResult.price.currencyFormatted(code: AppConstants.Currency.eur))
     }
 
     @Test("start() transitions to failure on error")

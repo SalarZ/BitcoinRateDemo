@@ -67,7 +67,7 @@ final class LivePriceCardViewModel: ObservableObject {
         do {
             let price = try await getCryptoCurrentPriceUseCase.execute(coinId: coinId, currency: currency)
             let livePrice = LivePriceViewItem(
-                priceText: price.price.currencyFormatted(code: currency),
+                price: price.price.currencyFormatted(code: currency),
                 lastUpdated: price.date.hourMinuteSecondFormatted)
             lastUpdatedPrice = livePrice
             state = .loaded(livePrice)

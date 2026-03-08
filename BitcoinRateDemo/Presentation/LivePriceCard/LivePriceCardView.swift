@@ -81,7 +81,7 @@ struct LivePriceCardView: View {
         case .loading, .failure:
             return String(localized: "price.card.placeholder")
         case .loaded(let price), .stale(let price):
-            return price.priceText
+            return price.price
         }
     }
 
@@ -108,55 +108,31 @@ struct LivePriceCardView: View {
 }
 
 #Preview("Success state") {
-    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(), onSelection: { _ in }))
-
+    LivePriceCardView(
+        viewModel: LivePriceCardViewModel(
+            getCryptoCurrentPriceUseCase: PreviewMocks.getCryptoCurrentPriceUseCase(),
+            refreshInterval: 5,
+            onSelection: { _ in }
+        )
+    )
 }
 
 #Preview("Stale state") {
-    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCaseStaleState(), refreshInterval: 1, onSelection: { _ in }))
-
+    LivePriceCardView(
+        viewModel: LivePriceCardViewModel(
+            getCryptoCurrentPriceUseCase: PreviewMocks.getCryptoCurrentPriceUseCase(mode: .successOnce),
+            refreshInterval: 5,
+            onSelection: { _ in }
+        )
+    )
 }
 
 #Preview("Failure state") {
-    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: false), onSelection: { _ in }))
-}
-
-#Preview("Refresh") {
-    LivePriceCardView(viewModel: LivePriceCardViewModel(getCryptoCurrentPriceUseCase: MockGetCryptoCurrentPriceUseCase(isSuccess: true), refreshInterval: 5, onSelection: { _ in }))
-}
-
-final class MockGetCryptoCurrentPriceUseCase: CryptoCurrentPriceUseCase {
-    private let delayDuration: TimeInterval
-    private let isSuccess: Bool
-
-    init(delayDuration: TimeInterval = 1.0, isSuccess: Bool = true) {
-        self.delayDuration = delayDuration
-        self.isSuccess = isSuccess
-    }
-
-    func execute(coinId: String, currency: String) async throws -> CryptoPrice {
-        try? await Task.sleep(seconds: delayDuration)
-        guard isSuccess else { throw NSError(domain: "", code: 0, userInfo: nil)}
-        return CryptoPrice(date: Date.now, price: 1234.1234, coinId: "bitcoin")
-    }
-}
-
-final class MockGetCryptoCurrentPriceUseCaseStaleState: CryptoCurrentPriceUseCase {
-    private let delayDuration: TimeInterval
-    private var executeCalled = false
-
-    init(delayDuration: TimeInterval = 1) {
-        self.delayDuration = delayDuration
-    }
-
-    func execute(coinId: String, currency: String) async throws -> CryptoPrice {
-        try? await Task.sleep(seconds: delayDuration)
-        guard !executeCalled else {
-            executeCalled.toggle()
-            throw NSError(domain: "", code: 0, userInfo: nil)
-        }
-
-        executeCalled.toggle()
-        return CryptoPrice(date: Date.now, price: 1234.1234, coinId: "bitcoin")
-    }
+    LivePriceCardView(
+        viewModel: LivePriceCardViewModel(
+            getCryptoCurrentPriceUseCase: PreviewMocks.getCryptoCurrentPriceUseCase(mode: .failure),
+            refreshInterval: 5,
+            onSelection: { _ in }
+        )
+    )
 }

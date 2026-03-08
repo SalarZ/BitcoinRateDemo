@@ -52,8 +52,8 @@ struct CryptoHistoryItemsViewModelTests {
         }
         #expect(rows.count == 2)
         #expect(!rows[0].id.uuidString.isEmpty)
-        #expect(rows[0].formattedDate == cryptoPrices[0].date.yearMonthDayFormatted)
-        #expect(rows[0].formattedPrice == cryptoPrices[0].price.currencyFormatted(code: AppConstants.Currency.eur))
+        #expect(rows[0].date == cryptoPrices[0].date.yearMonthDayFormatted)
+        #expect(rows[0].price == cryptoPrices[0].price.currencyFormatted(code: AppConstants.Currency.eur))
     }
 
     @Test("load() transitions to failure on error")

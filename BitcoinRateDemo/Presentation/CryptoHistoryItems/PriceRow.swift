@@ -9,8 +9,8 @@ import Foundation
 
 struct PriceRow: Identifiable, Equatable {
     let id = UUID()
-    let formattedDate: String
-    let formattedPrice: String
+    let date: String
+    let price: String
     let onSelect: () -> Void
 
     static func == (lhs: PriceRow, rhs: PriceRow) -> Bool {

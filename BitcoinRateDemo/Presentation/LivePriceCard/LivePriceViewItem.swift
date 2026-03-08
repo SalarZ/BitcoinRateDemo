@@ -9,7 +9,6 @@ import Foundation
 
 struct LivePriceViewItem: Identifiable, Equatable {
     let id = UUID()
-    // TODO: Salar check if we need to rename it to use formatted price or only price
-    let priceText: String
+    let price: String
     let lastUpdated: String
 }
