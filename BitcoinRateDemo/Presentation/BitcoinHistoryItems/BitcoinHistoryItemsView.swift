@@ -28,6 +28,10 @@ struct BitcoinHistoryItemsView: View {
                             Text(item.formattedPrice)
                                 .monospacedDigit()
                         }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            item.onSelect()
+                        }
                     }
                 
             case .failure(let error):
@@ -53,11 +57,11 @@ struct BitcoinHistoryItemsView: View {
 }
 
 #Preview("Success state") {
-    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase()))
+    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(), onSelection: { _ in }))
 }
 
 #Preview("Failue state") {
-    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false)))
+    BitcoinHistoryItemsView(viewModel: BitcoinHistoryItemsViewModel(getCryptoHistoryUseCase: MockCryptoHistoryUseCase(isSuccess: false), onSelection: { _ in }))
 }
 
 struct MockCryptoHistoryUseCase: CryptoPriceHistoryUseCase {

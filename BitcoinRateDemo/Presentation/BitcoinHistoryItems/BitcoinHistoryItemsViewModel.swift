@@ -13,9 +13,12 @@ final class BitcoinHistoryItemsViewModel: ObservableObject {
     @Published private(set) var state: ViewState<[PriceRow]> = .loading
 
     private let priceHistoryUseCase: CryptoPriceHistoryUseCase
+    private let onSelection: (PricePoint) -> Void
 
-    init(getCryptoHistoryUseCase: CryptoPriceHistoryUseCase) {
+    init(getCryptoHistoryUseCase: CryptoPriceHistoryUseCase,
+         onSelection: @escaping (PricePoint) -> Void) {
         self.priceHistoryUseCase = getCryptoHistoryUseCase
+        self.onSelection = onSelection
     }
 
     func load() async {
@@ -33,6 +36,9 @@ final class BitcoinHistoryItemsViewModel: ObservableObject {
 
     private func makePriceRow(from item: PricePoint) -> PriceRow {
         PriceRow(formattedDate: item.date.yearMonthDayFormatted,
-                 formattedPrice: item.price.currencyFormatted(code: AppConstants.Currency.eur))
+                 formattedPrice: item.price.currencyFormatted(code: AppConstants.Currency.eur),
+        onSelect: { [weak self] in
+            self?.onSelection(item)
+        })
     }
 }

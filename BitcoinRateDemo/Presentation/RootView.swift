@@ -13,14 +13,40 @@ struct RootView: View {
 
     var body: some View {
         NavigationView {
-            Self._printChanges()
-            return BitcoinHistoryView(
+            BitcoinHistoryView(
                 bitcoinHistoryItemsViewModel: BitcoinHistoryItemsViewModel(
-                    getCryptoHistoryUseCase: container.priceHistoryUseCase
+                    getCryptoHistoryUseCase: container.priceHistoryUseCase,
+                    onSelection: { coordinator.navigate(to: .priceDetails($0)) }
                 ),
                 currentPriceCardViewModel: CurrentPriceCardViewModel(
                     getCryptoCurrentPriceUseCase: container.currentPriceUseCase)
             )
+            .background(hiddenLink)
+        }
+    }
+
+    @ViewBuilder
+    private var hiddenLink: some View {
+        NavigationLink(
+            isActive: Binding(
+                get: { coordinator.activeRoute != nil },
+                set: { if !$0 { coordinator.pop() }}
+            ),
+            destination: {
+                destinationView
+            }, label: { EmptyView() })
+        .hidden()
+    }
+
+    @ViewBuilder
+    private var destinationView: some View {
+        switch coordinator.activeRoute {
+        case .priceDetails(let pricePoint):
+            PriceDetailsView(viewModel: PriceDetailsViewModel(loader: {
+                try await container.priceDetailsUseCase.execute(coinId: pricePoint.coinId, date: pricePoint.date)
+            }))
+        case .none:
+            EmptyView()
         }
     }
 }

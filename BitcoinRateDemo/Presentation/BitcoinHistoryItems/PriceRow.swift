@@ -11,4 +11,9 @@ struct PriceRow: Identifiable, Equatable {
     let id = UUID()
     let formattedDate: String
     let formattedPrice: String
+    let onSelect: () -> Void
+
+    static func == (lhs: PriceRow, rhs: PriceRow) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
