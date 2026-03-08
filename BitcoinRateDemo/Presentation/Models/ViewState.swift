@@ -7,6 +7,6 @@
 
 enum ViewState<T: Equatable>: Equatable {
     case loading
-    case success(T)
+    case loaded(T)
     case failure(String)
 }

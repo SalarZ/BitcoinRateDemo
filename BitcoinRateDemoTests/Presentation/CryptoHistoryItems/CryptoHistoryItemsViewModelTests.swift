@@ -46,7 +46,7 @@ struct CryptoHistoryItemsViewModelTests {
 
         await sut.load()
 
-        guard case .success(let rows) = sut.state else {
+        guard case .loaded(let rows) = sut.state else {
             Issue.record("Expected .success state after load()")
             return
         }
@@ -90,7 +90,7 @@ struct CryptoHistoryItemsViewModelTests {
 
         #expect(sut.state == .loading)
         await loadTask.value
-        #expect(sut.state == .success([]))
+        #expect(sut.state == .loaded([]))
     }
 
     @Test("loadIfNeeded() fetches when state is loading")
@@ -141,7 +141,7 @@ struct CryptoHistoryItemsViewModelTests {
 
             await sut.load()
 
-            guard case .success(let items) = sut.state else {
+            guard case .loaded(let items) = sut.state else {
                 Issue.record("Expected .success state after load()")
                 return
             }

@@ -24,7 +24,7 @@ struct CryptoDetailsView: View {
             switch viewModel.state {
             case .loading:
                 ProgressView()
-            case .success(let details):
+            case .loaded(let details):
                 Text(String(localized: "details.last.update \(details.date)"))
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)

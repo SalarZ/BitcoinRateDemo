@@ -22,7 +22,7 @@ final class CryptoHistoryItemsViewModel: ObservableObject {
     }
 
     func loadIfNeeded() async {
-        if case .success = state { return }
+        if case .loaded = state { return }
         await load()
     }
 
@@ -33,7 +33,7 @@ final class CryptoHistoryItemsViewModel: ObservableObject {
                 coinId: AppConstants.Coin.bitcoinId,
                 currency: AppConstants.Currency.eur,
                 days: AppConstants.API.priceHistoryDays)
-            state = .success(prices.map { makePriceRow(from: $0) })
+            state = .loaded(prices.map { makePriceRow(from: $0) })
         } catch {
             state = .failure(error.localizedDescription)
         }

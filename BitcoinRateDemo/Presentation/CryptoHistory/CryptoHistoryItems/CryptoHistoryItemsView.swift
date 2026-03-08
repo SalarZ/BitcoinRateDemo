@@ -20,7 +20,7 @@ struct CryptoHistoryItemsView: View {
             switch viewModel.state {
             case .loading:
                 loadingView
-            case .success(let items):
+            case .loaded(let items):
                 ForEach(items) { item in
                     HStack {
                         Text(item.date)

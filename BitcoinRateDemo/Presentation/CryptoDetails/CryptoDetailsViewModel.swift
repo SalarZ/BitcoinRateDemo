@@ -25,7 +25,7 @@ final class CryptoDetailsViewModel: ObservableObject {
     func load() async {
         state = .loading
         do {
-            state = .success(detailsViewItem(from: try await loader()))
+            state = .loaded(detailsViewItem(from: try await loader()))
         } catch {
             Self.logger.error("Failed to load price details: \(error.localizedDescription, privacy: .public)")
             state = .failure(error.localizedDescription)

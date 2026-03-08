@@ -29,7 +29,7 @@ struct CryptoDetailsViewModelTests {
 
         await sut.load()
 
-        guard case .success(let item) = sut.state else {
+        guard case .loaded(let item) = sut.state else {
             Issue.record("Expected .success state")
             return
         }
@@ -52,7 +52,7 @@ struct CryptoDetailsViewModelTests {
 
         await sut.load()
 
-        guard case .success(let item) = sut.state else {
+        guard case .loaded(let item) = sut.state else {
             Issue.record("Expected .success state")
             return
         }
