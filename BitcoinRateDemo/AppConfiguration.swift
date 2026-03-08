@@ -7,9 +7,13 @@
 
 import Foundation
 
-enum AppConfiguration {
+struct AppConfiguration {
+    enum Keys {
+        static let apiKey = "COINGECKO_API_KEY"
+    }
+
     static var coinGeckoAPIKey: String {
-        guard let key = Bundle.main.infoDictionary?["COINGECKO_API_KEY"] as? String, !key.isEmpty else {
+        guard let key = Bundle.main.infoDictionary?[Keys.apiKey] as? String, !key.isEmpty else {
             fatalError("Missing COINGECKO_API_KEY")
         }
         return key

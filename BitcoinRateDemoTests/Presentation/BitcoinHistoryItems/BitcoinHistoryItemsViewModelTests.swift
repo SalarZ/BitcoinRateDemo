@@ -93,6 +93,30 @@ struct BitcoinHistoryItemsViewModelTests {
         #expect(sut.state == .success([]))
     }
 
+    @Test("itemSelect triggers onSelection closure")
+    func itemSelectTriggersOnSelection() async {
+        let fixedDate = Date(timeIntervalSince1970: 1_700_000_000)
+        let points = [
+            PricePoint(date: fixedDate, price: 40_000, coinId: "bitcoin"),
+            PricePoint(date: fixedDate.addingTimeInterval(86400), price: 41_000, coinId: "bitcoin")
+        ]
+        await confirmation { confirmation in
+            let (sut, _) = makeSUT(result: .success(points)) { item in
+                #expect(item == points.last)
+                confirmation.confirm()
+            }
+
+            await sut.load()
+
+            guard case .success(let items) = sut.state else {
+                Issue.record("Expected .success state after load()")
+                return
+            }
+
+            items.last?.onSelect()
+        }
+    }
+
     // MARK: - Helpers
     private func makeSUT(result: Result<[PricePoint], Error> = .success([]),
                          onSelection: @escaping (PricePoint) -> Void = { _ in }

@@ -122,6 +122,17 @@ struct CurrentPriceCardViewModelTests {
         }
     }
 
+    @Test("onSelect triggers onSelection closure")
+    func onSelectTriggersOnSelection() async {
+        await confirmation { confirmation in
+            let (sut, _) = makeSUT(onSelection: { coinId in
+                confirmation.confirm()
+            })
+
+            sut.onSelect()
+        }
+    }
+
     // MARK: - Helpers
     private func makeSUT(result: Result<PricePoint, Error> = .success(Self.makeResult()),
                          refreshInterval: TimeInterval = 1,
