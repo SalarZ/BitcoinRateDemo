@@ -21,6 +21,11 @@ final class CryptoHistoryItemsViewModel: ObservableObject {
         self.onSelection = onSelection
     }
 
+    func loadIfNeeded() async {
+        if case .success = state { return }
+        await load()
+    }
+
     func load() async {
         state = .loading
         do {

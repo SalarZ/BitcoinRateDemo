@@ -93,6 +93,39 @@ struct CryptoHistoryItemsViewModelTests {
         #expect(sut.state == .success([]))
     }
 
+    @Test("loadIfNeeded() fetches when state is loading")
+    func loadIfNeededFetchesWhenLoading() async {
+        let (sut, useCase) = makeSUT(result: .success([]))
+
+        await sut.loadIfNeeded()
+
+        #expect(useCase.executeCalls.count == 1)
+    }
+
+    @Test("loadIfNeeded() skips fetch when state is already success")
+    func loadIfNeededSkipsWhenSuccess() async {
+        let (sut, useCase) = makeSUT(result: .success([]))
+        await sut.load()
+        let callsAfterFirstLoad = useCase.executeCalls.count
+
+        await sut.loadIfNeeded()
+
+        #expect(useCase.executeCalls.count == callsAfterFirstLoad)
+    }
+
+    @Test("loadIfNeeded() fetches when state is failure")
+    func loadIfNeededFetchesWhenFailure() async {
+        let anyError = NSError(domain: "any-error", code: 0)
+        let (sut, useCase) = makeSUT(result: .failure(anyError))
+        await sut.load()
+        let callsAfterFirstLoad = useCase.executeCalls.count
+        useCase.result = .success([])
+
+        await sut.loadIfNeeded()
+
+        #expect(useCase.executeCalls.count == callsAfterFirstLoad + 1)
+    }
+
     @Test("itemSelect triggers onSelection closure")
     func itemSelectTriggersOnSelection() async {
         let fixedDate = Date(timeIntervalSince1970: 1_700_000_000)

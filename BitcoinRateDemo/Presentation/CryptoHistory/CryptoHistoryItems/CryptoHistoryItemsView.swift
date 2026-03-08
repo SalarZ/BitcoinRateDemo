@@ -42,7 +42,7 @@ struct CryptoHistoryItemsView: View {
             }
         }
         .task {
-            await viewModel.load()
+            await viewModel.loadIfNeeded()
         }
     }
 
