@@ -25,7 +25,7 @@ struct StatusCodeValidator: ResponseValidator {
         guard let httpResponse = response as? HTTPURLResponse else { return }
         let statusCode = httpResponse.statusCode
         guard validRange.contains(statusCode) else {
-            Self.logger.error("HTTP \(statusCode) for \(httpResponse.url?.path ?? "unknown", privacy: .public)")
+            Self.logger.error("HTTP \(statusCode) for \(httpResponse, privacy: .public)")
             throw CryptoRepositoryError.serverError(statusCode: statusCode)
         }
     }

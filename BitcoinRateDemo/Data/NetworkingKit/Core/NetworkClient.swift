@@ -42,16 +42,13 @@ final class DefaultNetworkClient: NetworkClient {
             requestURL = baseURL.appendingPathComponent(request.path)
         }
 
-        guard var components = URLComponents(url: requestURL, resolvingAgainstBaseURL: false) else {
-            Self.logger.fault("Failed to create URLComponents from URL: \(requestURL, privacy: .public) — path: \(request.path, privacy: .public)")
-            throw URLError(.badURL)
-        }
+        var components = URLComponents(url: requestURL, resolvingAgainstBaseURL: false)
 
         if !request.queryItems.isEmpty {
-            components.queryItems = request.queryItems
+            components?.queryItems = request.queryItems
         }
 
-        guard let url = components.url else {
+        guard let url = components?.url else {
             Self.logger.fault(
                 "URLComponents failed to produce a valid URL — path: \(request.path, privacy: .public), queryItems: \(request.queryItems.map(\.description).joined(separator: "&"), privacy: .public)"
             )
