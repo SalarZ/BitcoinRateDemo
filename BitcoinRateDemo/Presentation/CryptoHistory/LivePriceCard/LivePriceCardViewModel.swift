@@ -39,8 +39,7 @@ final class LivePriceCardViewModel: ObservableObject {
         self.getCryptoCurrentPriceUseCase = getCryptoCurrentPriceUseCase
         self.refreshInterval = refreshInterval
         self.onSelection = onSelection
-
-        print(">>>> Live price init")
+        start()
     }
 
     func start() {

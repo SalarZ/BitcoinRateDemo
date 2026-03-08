@@ -21,10 +21,6 @@ struct CryptoHistoryView: View {
         List {
             Section(String(localized: "history.section.today")) {
                 LivePriceCardView(viewModel: livePriceCardViewModel)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        livePriceCardViewModel.onSelect()
-                    }
             }
 
             CryptoHistoryItemsView(viewModel: cryptoHistoryItemsViewModel)

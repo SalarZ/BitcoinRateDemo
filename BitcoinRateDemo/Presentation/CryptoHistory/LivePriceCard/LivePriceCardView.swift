@@ -75,8 +75,9 @@ struct LivePriceCardView: View {
                 }
             }
         }
-        .task {
-            viewModel.start()
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.onSelect()
         }
     }
 
