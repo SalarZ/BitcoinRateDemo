@@ -1,4 +1,4 @@
-# BitcoinTest
+# BitcoinRateDemo
 
 A native iOS app that tracks the Bitcoin price in real time and displays its 14-day EUR price history, built as a clean-architecture showcase in Swift.
 
