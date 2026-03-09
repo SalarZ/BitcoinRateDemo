@@ -12,8 +12,8 @@ typealias Routable = Hashable
 
 protocol NavigationControlling: ObservableObject {
     associatedtype Route: Routable
-    var path: CurrentValueSubject<[Route], Never> { get set }
-    var activeRoute: CurrentValueSubject<Route?, Never> { get set }
+    var path: [Route] { get set }
+    var activeRoute: Route? { get set }
 
     func push(_ route: Route)
     func pop()
@@ -33,22 +33,22 @@ protocol Coordinating {
 }
 
 final class NavigationController<Route: Routable>: NavigationControlling {
-    var path: CurrentValueSubject<[Route], Never> = .init([])
-    var activeRoute: CurrentValueSubject<Route?, Never> = .init(nil)
+    @Published var path: [Route] = []
+    @Published var activeRoute: Route? = nil
 
     func push(_ route: Route) {
         if #available(iOS 16, *) {
-            path.value.append(route)
+            path.append(route)
         } else {
-            activeRoute.value = route
+            activeRoute = route
         }
     }
 
     func pop() {
         if #available(iOS 16, *) {
-            _ = path.value.popLast()
+            _ = path.popLast()
         } else {
-            activeRoute.value = nil
+            activeRoute = nil
         }
     }
 }
