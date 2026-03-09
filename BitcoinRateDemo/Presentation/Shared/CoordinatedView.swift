@@ -34,32 +34,14 @@ struct CoordinatedView15<C: Coordinating>: View {
 
     var body: some View {
         NavigationView {
-            coordinator.rootView
-                .background(hiddenLink)
+            RecursiveNavLink(
+                path: $navigationController.path,
+                index: 0,
+                content: AnyView(coordinator.rootView),
+                buildDestination: { active in
+                    AnyView(coordinator.coordinate(active))
+                })
         }
-    }
-
-    @MainActor @ViewBuilder
-    private var hiddenLink: some View {
-        NavigationLink(
-            isActive: Binding(
-                get: {
-                    return navigationController.activeRoute != nil
-                },
-                set: {
-                    if !$0 {
-                        navigationController.pop()
-                    }
-                }
-            ),
-            destination: {
-                if let activeRoute = navigationController.activeRoute {
-                    coordinator.coordinate(activeRoute)
-                } else {
-                    EmptyView()
-                }
-            }, label: { EmptyView() })
-        .hidden()
     }
 }
 
@@ -78,5 +60,49 @@ struct CoordinatedView16<C: Coordinating>: View {
             coordinator.rootView
                 .navigationDestination(for: C.Route.self, destination: coordinator.coordinate)
         }
+    }
+}
+
+private struct RecursiveNavLink<Route: Routable>: View {
+    @Binding var path: [Route]
+    let index: Int
+    let content: AnyView
+    let buildDestination: (Route) -> AnyView
+
+    private var isActive: Binding<Bool> {
+        Binding(
+            get: { path.count > index },
+            set: { isActive in
+                if !isActive, path.count > index {
+                    path.removeLast(path.count - index)
+                }
+            }
+        )
+    }
+
+    var body: some View {
+        content
+            .background(
+                NavigationLink(
+                    isActive: isActive,
+                    destination: {
+                        if path.count > index {
+                            let route = path[index]
+                            RecursiveNavLink(
+                                path: $path,
+                                index: index + 1,
+                                content: buildDestination(route),
+                                buildDestination: buildDestination
+                            )
+                        } else {
+                            EmptyView()
+                        }
+                    },
+                    label: {
+                        EmptyView()
+                    }
+                )
+                .hidden()
+            )
     }
 }
