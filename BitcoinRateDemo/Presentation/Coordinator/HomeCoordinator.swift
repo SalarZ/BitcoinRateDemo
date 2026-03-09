@@ -9,13 +9,10 @@ import Combine
 import SwiftUI
 
 enum HomeCoordinatorRoute: Routable {
-    var id: String { String(describing: self) }
-
     case priceDetails(CryptoPrice)
     case livePriceDetails(coinId: String)
 }
 
-@MainActor
 final class HomeCoordinator: Coordinating, ObservableObject {
     typealias Nav = NavigationController<Route>
     typealias Route = HomeCoordinatorRoute
@@ -47,7 +44,7 @@ final class HomeCoordinator: Coordinating, ObservableObject {
         self.container = container
     }
 
-    @MainActor @ViewBuilder
+    @ViewBuilder
     var rootView: some View {
         CryptoHistoryView(
             cryptoHistoryItemsViewModel: cryptoHistoryItemsViewModel,
@@ -58,7 +55,7 @@ final class HomeCoordinator: Coordinating, ObservableObject {
 
 extension HomeCoordinator {
 
-    @ViewBuilder @MainActor
+    @ViewBuilder
     func coordinate(_ route: Route) -> some View {
         switch route {
         case .priceDetails(let price):

@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-typealias Routable = Hashable & Identifiable
+typealias Routable = Hashable
 
 protocol NavigationControlling: ObservableObject {
     associatedtype Route: Routable
@@ -19,7 +19,8 @@ protocol NavigationControlling: ObservableObject {
     func pop()
 }
 
-protocol Coordinating: AnyObject {
+@MainActor
+protocol Coordinating {
     associatedtype Route: Routable
     associatedtype Destination: View
     associatedtype RootView: View
@@ -27,8 +28,8 @@ protocol Coordinating: AnyObject {
 
     var navigationController: Nav { get }
 
-    @ViewBuilder @MainActor func coordinate(_ route: Route) -> Destination
-    @ViewBuilder @MainActor var rootView: RootView { get }
+    @ViewBuilder func coordinate(_ route: Route) -> Destination
+    @ViewBuilder var rootView: RootView { get }
 }
 
 final class NavigationController<Route: Routable>: NavigationControlling {
