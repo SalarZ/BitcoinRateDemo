@@ -26,7 +26,8 @@ final class DependencyContainer: ObservableObject {
     private(set) lazy var livePriceCardViewModel: LivePriceCardViewModel = {
         LivePriceCardViewModel(
             getCryptoCurrentPriceUseCase: currentPriceUseCase,
-            onSelection: { [weak appCoordinator] in appCoordinator?.navigate(to: .livePriceDetails(coinId: $0)) }
+            onSelection: { [weak appCoordinator] in
+                appCoordinator?.navigate(to: .livePriceDetails(coinId: $0)) }
         )
     }()
 
