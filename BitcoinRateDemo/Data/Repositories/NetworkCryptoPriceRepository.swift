@@ -19,17 +19,10 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
     }
 
     func historicalPrices(coinId: String, currency: String, days: Int) async throws -> [CryptoPrice] {
-        let request = APIRequest(
-            path: "coins/\(coinId)/market_chart",
-            queryItems: [
-                .init(name: "vs_currency", value: currency),
-                .init(name: "days", value: "\(days)"),
-                .init(name: "interval", value: "daily"),
-                .init(name: "precision", value: "full")
-            ])
+        let endpoint = CoinEndpoint.marketChart(.init(coinId: coinId, currency: currency, days: days))
 
         do {
-            let marketChart: MarketChartDTO = try await networkClient.send(request)
+            let marketChart: MarketChartDTO = try await networkClient.send(endpoint)
             return try marketChart.toCryptoPrice(coinId: coinId)
         } catch {
             throw mapped(error, context: "historicalPrices coinId=\(coinId)")
@@ -37,18 +30,10 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
     }
 
     func livePrice(coinId: String, currencies: [String]) async throws -> LivePrice {
-        let request = APIRequest(
-            path: "simple/price",
-            queryItems: [
-                .init(name: "ids", value: coinId),
-                .init(name: "vs_currencies", value: currencies.joined(separator: ",")),
-                .init(name: "localization", value: "false"),
-                .init(name: "include_last_updated_at", value: "true"),
-                .init(name: "precision", value: "full")
-            ])
+        let endpoint = SimpleEndpoint.price(.init(coinId: coinId, currencies: currencies))
 
         do {
-            let details: CoinGeckoPricesDTO = try await networkClient.send(request)
+            let details: CoinGeckoPricesDTO = try await networkClient.send(endpoint)
             return try details.toLivePrice(coinId: coinId)
         } catch {
             throw mapped(error, context: "livePrice coinId=\(coinId)")
@@ -58,15 +43,10 @@ final class NetworkCryptoPriceRepository: CryptoPriceRepository {
     func priceDetails(coinId: String, date: Date) async throws -> CryptoDetails {
         let formattedDate = date.apiDateFormat
 
-        let request = APIRequest(
-            path: "coins/\(coinId)/history",
-            queryItems: [
-                .init(name: "date", value: formattedDate),
-                .init(name: "localization", value: "false"),
-            ])
+        let endPoint = CoinEndpoint.history(.init(coinId: coinId, date: formattedDate))
 
         do {
-            let details: CoinDetailsDTO = try await networkClient.send(request)
+            let details: CoinDetailsDTO = try await networkClient.send(endPoint)
             return details.toPriceDetails(for: date)
         } catch {
             throw mapped(error, context: "coinHistoryDetails coinId=\(coinId) date=\(formattedDate)")

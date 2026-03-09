@@ -266,9 +266,9 @@ struct NetworkCryptoPriceRepositoryTests {
 private final class MockNetworkClient: NetworkClient {
     var result: Any = ()
     var error: Error?
-    var sendCalls: [APIRequest] = []
+    var sendCalls: [Endpoint] = []
 
-    func send<Response: Decodable>(_ request: APIRequest) async throws -> Response {
+    func send<Response: Decodable>(_ request: Endpoint) async throws -> Response {
         sendCalls.append(request)
         if let error = error { throw error }
         guard let typedResult = result as? Response else {

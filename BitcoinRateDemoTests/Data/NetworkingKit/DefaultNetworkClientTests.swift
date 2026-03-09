@@ -13,24 +13,17 @@ struct DefaultNetworkClientTests {
 
     @Test
     func sendCreateValidRequest() async throws {
-        let request = APIRequest(
-            path: "path/test",
-            method: .get,
-            queryItems: [
-                .init(name: "param1", value: "value1")
-            ],
-            headers: ["header": "value"],
-            requiresAuthorization: false)
+        let endpoint = MockEndpoint()
         let client = MockHTTPClient(response: .success(makeResponse()))
         let baseURL = URL(string: "http://baseURL.com")!
         let sut = DefaultNetworkClient(httpClient: client, baseURL: baseURL)
 
-        let _: Data? = try? await sut.send(request)
+        let _: Data? = try? await sut.send(endpoint)
 
         #expect(client.dataCalls.count == 1)
         let apiRequest = try #require(client.dataCalls.first)
-        #expect(apiRequest.httpMethod == request.method.rawValue)
-        request.headers.forEach { headerItem in
+        #expect(apiRequest.httpMethod == endpoint.method.rawValue)
+        endpoint.headers.forEach { headerItem in
             #expect(apiRequest.allHTTPHeaderFields?.contains(where: { $0.key == headerItem.key && $0.value == headerItem.value}) ?? false)
         }
 
@@ -38,37 +31,35 @@ struct DefaultNetworkClientTests {
         let requestURLComponent = URLComponents(url: apiRequestURL, resolvingAgainstBaseURL: false)
         #expect(requestURLComponent?.scheme == "http")
         #expect(requestURLComponent?.host == "baseURL.com")
-        #expect(requestURLComponent?.path == "/\(request.path)")
+        #expect(requestURLComponent?.path == "/\(endpoint.path)")
 
         let queryItems = try #require(requestURLComponent?.queryItems)
-        #expect(queryItems == request.queryItems)
+        #expect(queryItems == endpoint.queryItems)
     }
 
     @Test("send sets httpMethod correctly", arguments: [HTTPMethod.get, .delete, .post, .put])
     func sendCreateValidRequestWithHTTPMethod(httpMethod: HTTPMethod) async throws {
-        let request = APIRequest(
-            path: "path/test",
-            method: httpMethod)
+        let endpoint = MockEndpoint(method: httpMethod)
         let client = MockHTTPClient(response: .success(makeResponse()))
         let baseURL = URL(string: "http://baseURL.com")!
         let sut = DefaultNetworkClient(httpClient: client, baseURL: baseURL)
 
-        let _: Data? = try? await sut.send(request)
+        let _: Data? = try? await sut.send(endpoint)
 
         #expect(client.dataCalls.count == 1)
         let apiRequest = try #require(client.dataCalls.first)
-        #expect(apiRequest.httpMethod == request.method.rawValue)
+        #expect(apiRequest.httpMethod == endpoint.method.rawValue)
     }
 
     @Test
     func sendCallsAuthorize_whenRequiresAuthorizationIsTrue() async throws {
         let authorizer = MockRequestAuthorizer()
-        let request = APIRequest(path: "path/test", method: .get, requiresAuthorization: true)
+        let endpoint = MockEndpoint(requiresAuthorization: true)
         let client = MockHTTPClient(response: .success(makeResponse()))
         let baseURL = URL(string: "http://baseURL.com")!
         let sut = DefaultNetworkClient(httpClient: client, baseURL: baseURL, requestAuthorizer: authorizer)
 
-        let _: Data? = try? await sut.send(request)
+        let _: Data? = try? await sut.send(endpoint)
 
         #expect(authorizer.authorizeCallsCount == 1)
     }
@@ -76,12 +67,12 @@ struct DefaultNetworkClientTests {
     @Test
     func sendDoesNotCallsAuthorize_whenRequiresAuthorizationIsFalse() async throws {
         let authorizer = MockRequestAuthorizer()
-        let request = APIRequest(path: "path/test", method: .get, requiresAuthorization: false)
+        let endpoint = MockEndpoint(requiresAuthorization: false)
         let client = MockHTTPClient(response: .success(makeResponse()))
         let baseURL = URL(string: "http://baseURL.com")!
         let sut = DefaultNetworkClient(httpClient: client, baseURL: baseURL, requestAuthorizer: authorizer)
 
-        let _: Data? = try? await sut.send(request)
+        let _: Data? = try? await sut.send(endpoint)
 
         #expect(authorizer.authorizeCallsCount == 0)
     }
@@ -89,25 +80,25 @@ struct DefaultNetworkClientTests {
     @Test
     func sendCallsValidator() async throws {
         let validator = MockResponseValidator()
-        let request = APIRequest(path: "path/test", method: .get, requiresAuthorization: false)
+        let endpoint = MockEndpoint()
         let client = MockHTTPClient(response: .success(makeResponse()))
         let baseURL = URL(string: "http://baseURL.com")!
         let sut = DefaultNetworkClient(httpClient: client, baseURL: baseURL, responseValidator: validator)
 
-        let _: Data? = try? await sut.send(request)
+        let _: Data? = try? await sut.send(endpoint)
 
         #expect(validator.validateCallsCount == 1)
     }
 
     @Test
     func sendThrowsAnErrorOnInvalidResponseData() async throws {
-        let request = APIRequest(path: "path/test", method: .get, requiresAuthorization: false)
+        let endpoint = MockEndpoint()
         let client = MockHTTPClient(response: .success(makeResponse()))
         let baseURL = URL(string: "http://baseURL.com")!
         let sut = DefaultNetworkClient(httpClient: client, baseURL: baseURL)
 
         await #expect(throws: Error.self) {
-            let _: Data = try await sut.send(request)
+            let _: Data = try await sut.send(endpoint)
         }
     }
 
@@ -115,12 +106,12 @@ struct DefaultNetworkClientTests {
     func sendRetursValidObjectOnSuccess() async throws {
         let responseObject = MockModel(id: 1, name: "test")
         let responseData = try JSONEncoder().encode(responseObject)
-        let request = APIRequest(path: "path/test", method: .get, requiresAuthorization: false)
+        let endpoint = MockEndpoint()
         let client = MockHTTPClient(response: .success(makeResponse(data: responseData)))
         let baseURL = URL(string: "http://baseURL.com")!
         let sut = DefaultNetworkClient(httpClient: client, baseURL: baseURL)
 
-        let result: MockModel = try await sut.send(request)
+        let result: MockModel = try await sut.send(endpoint)
 
         #expect(result == responseObject)
 
@@ -165,4 +156,26 @@ private final class MockResponseValidator: ResponseValidator {
     func validate(data: Data, response: URLResponse) throws {
         validateCallsCount += 1
     }
+}
+
+private struct MockEndpoint: Endpoint {
+    let path: String
+    let method: BitcoinRateDemo.HTTPMethod
+    let queryItems: [URLQueryItem]
+    let headers: [String : String]
+    let requiresAuthorization: Bool
+
+    init(path: String = "path/test",
+         method: BitcoinRateDemo.HTTPMethod = .get,
+         queryItems: [URLQueryItem] = [.init(name: "param1", value: "value1")],
+         headers: [String : String] = ["headerKey": "headerValue"],
+         requiresAuthorization: Bool = true) {
+        self.path = path
+        self.method = method
+        self.queryItems = queryItems
+        self.headers = headers
+        self.requiresAuthorization = requiresAuthorization
+    }
+
+
 }

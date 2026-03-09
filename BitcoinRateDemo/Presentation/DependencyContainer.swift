@@ -10,26 +10,10 @@ import Combine
 
 @MainActor
 final class DependencyContainer: ObservableObject {
-    let appCoordinator = AppCoordinator()
     let priceHistoryUseCase: CryptoPriceHistoryUseCase
     let currentPriceUseCase: CryptoCurrentPriceUseCase
     let priceDetailsUseCase: CryptoPriceDetailsUseCase
     let livePriceDetailsUseCase: CryptoLivePriceDetailsUseCase
-
-    private(set) lazy var cryptoHistoryItemsViewModel: CryptoHistoryItemsViewModel = {
-        CryptoHistoryItemsViewModel(
-            getCryptoHistoryUseCase: priceHistoryUseCase,
-            onSelection: { [weak appCoordinator] in appCoordinator?.navigate(to: .priceDetails($0)) }
-        )
-    }()
-
-    private(set) lazy var livePriceCardViewModel: LivePriceCardViewModel = {
-        LivePriceCardViewModel(
-            getCryptoCurrentPriceUseCase: currentPriceUseCase,
-            onSelection: { [weak appCoordinator] in
-                appCoordinator?.navigate(to: .livePriceDetails(coinId: $0)) }
-        )
-    }()
 
     init() {
         let networkClient = DefaultNetworkClient(

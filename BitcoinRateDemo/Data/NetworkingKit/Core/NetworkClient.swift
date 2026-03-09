@@ -9,7 +9,7 @@ import Foundation
 import OSLog
 
 protocol NetworkClient {
-    func send<Response: Decodable>(_ request: APIRequest) async throws -> Response
+    func send<Response: Decodable>(_ request: Endpoint) async throws -> Response
 }
 
 final class DefaultNetworkClient: NetworkClient {
@@ -34,7 +34,7 @@ final class DefaultNetworkClient: NetworkClient {
         self.responseValidator = responseValidator
     }
 
-    func send<Response: Decodable>(_ request: APIRequest) async throws -> Response {
+    func send<Response: Decodable>(_ request: Endpoint) async throws -> Response {
         var requestURL: URL
         if #available(iOS 16.0, *) {
             requestURL = baseURL.appending(path: request.path)

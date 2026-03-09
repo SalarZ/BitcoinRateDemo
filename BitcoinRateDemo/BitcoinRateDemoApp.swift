@@ -15,7 +15,6 @@ struct BitcoinRateDemoApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(container)
-                .environmentObject(container.appCoordinator)
         }
     }
 }
